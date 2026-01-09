@@ -15,5 +15,8 @@ Don't mutate the parameter.
 */
 
 // TODO add your code here
-const inverse = () => {};
+const inverse = (array) => {
+  if (!Array.isArray(array) || !array.length) return [];
+  return array.map((v) => -v);
+};
 module.exports = inverse;

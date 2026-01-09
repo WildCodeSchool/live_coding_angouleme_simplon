@@ -11,5 +11,17 @@ Bonus : do not use a loop
 */
 
 // TODO add your code here
+const uniq = (array) => {
+  return array.map((el, i) => {
+    // pour chaque tour de boocle je dois
+    // test el avec tout les elements du array
+
+    for (let j = 0; j < array.length; j++) {
+      if (el === array[j]) {
+        array.splice(i, i);
+      }
+    }
+  });
+};
 
 module.exports = uniq;
