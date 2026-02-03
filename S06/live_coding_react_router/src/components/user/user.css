@@ -1,0 +1,21 @@
+.user-card {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-evenly;
+    gap: 10px;
+}
+
+.user-card a {
+    color: #fff;
+}
+
+.user-card-item {
+    width: 400px;
+    display: flex;
+    flex-direction: column;
+    flex-wrap: wrap;
+    gap: 5px;
+    padding: 10px;
+    border: 1px solid gray;
+    border-radius: 8px;
+}
