@@ -42,3 +42,14 @@
 .read-the-docs {
   color: #888;
 }
+
+nav ul {
+  display: flex;
+  flex-direction: row;
+  gap: 10px;
+  list-style: none;
+}
+
+ul li a {
+  color: #fff;
+}

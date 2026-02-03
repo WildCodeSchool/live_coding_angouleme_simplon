@@ -1,0 +1,25 @@
+.card {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 10px;
+}
+
+.card-item {
+    width: 400px;
+    border: 1px solid #b49d9d;
+}
+
+.card-body {
+    padding: 6px;
+}
+
+img {
+    max-width: 100%;
+    object-fit: cover;
+
+}
+
+ul li a {
+    color: #fff;
+}
