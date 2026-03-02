@@ -1,0 +1,927 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QCM Avancé – React / API REST / MySQL / Auth</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Syne:wght@700;800&display=swap"
+        rel="stylesheet">
+    <style>
+        :root {
+            --bg: #0a0a0f;
+            --surface: #12121a;
+            --surface2: #1a1a28;
+            --accent: #7c3aed;
+            --accent2: #06d6a0;
+            --accent3: #f72585;
+            --text: #e2e8f0;
+            --muted: #64748b;
+            --correct: #06d6a0;
+            --wrong: #f72585;
+            --border: rgba(124, 58, 237, 0.2);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: var(--bg);
+            color: var(--text);
+            font-family: 'JetBrains Mono', monospace;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 40px 20px;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: -200px;
+            left: -200px;
+            width: 600px;
+            height: 600px;
+            background: radial-gradient(circle, rgba(124, 58, 237, 0.12) 0%, transparent 70%);
+            pointer-events: none;
+        }
+
+        body::after {
+            content: '';
+            position: fixed;
+            bottom: -200px;
+            right: -200px;
+            width: 500px;
+            height: 500px;
+            background: radial-gradient(circle, rgba(6, 214, 160, 0.08) 0%, transparent 70%);
+            pointer-events: none;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 48px;
+        }
+
+        .badge {
+            display: inline-block;
+            background: rgba(124, 58, 237, 0.15);
+            border: 1px solid var(--accent);
+            color: var(--accent);
+            font-size: 11px;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            padding: 4px 14px;
+            border-radius: 2px;
+            margin-bottom: 16px;
+        }
+
+        h1 {
+            font-family: 'Syne', sans-serif;
+            font-size: clamp(28px, 5vw, 52px);
+            font-weight: 800;
+            line-height: 1.1;
+            background: linear-gradient(135deg, #fff 30%, var(--accent) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .subtitle {
+            color: var(--muted);
+            font-size: 13px;
+            margin-top: 8px;
+            letter-spacing: 1px;
+        }
+
+        .progress-bar-container {
+            width: 100%;
+            max-width: 760px;
+            margin-bottom: 32px;
+        }
+
+        .progress-info {
+            display: flex;
+            justify-content: space-between;
+            font-size: 12px;
+            color: var(--muted);
+            margin-bottom: 8px;
+        }
+
+        .progress-track {
+            height: 3px;
+            background: var(--surface2);
+            border-radius: 3px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--accent), var(--accent2));
+            border-radius: 3px;
+            transition: width 0.5s ease;
+        }
+
+        .quiz-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 36px;
+            max-width: 760px;
+            width: 100%;
+            position: relative;
+            overflow: hidden;
+            animation: slideIn 0.4s ease;
+        }
+
+        .quiz-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, var(--accent), var(--accent2));
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(16px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .category-tag {
+            display: inline-block;
+            font-size: 10px;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            padding: 3px 10px;
+            border-radius: 2px;
+            margin-bottom: 20px;
+        }
+
+        .cat-react {
+            background: rgba(6, 214, 160, 0.12);
+            color: var(--accent2);
+            border: 1px solid rgba(6, 214, 160, 0.3);
+        }
+
+        .cat-api {
+            background: rgba(124, 58, 237, 0.12);
+            color: #a78bfa;
+            border: 1px solid rgba(124, 58, 237, 0.3);
+        }
+
+        .cat-mysql {
+            background: rgba(247, 37, 133, 0.12);
+            color: #f472b6;
+            border: 1px solid rgba(247, 37, 133, 0.3);
+        }
+
+        .cat-auth {
+            background: rgba(251, 191, 36, 0.12);
+            color: #fbbf24;
+            border: 1px solid rgba(251, 191, 36, 0.3);
+        }
+
+        .question-text {
+            font-size: clamp(15px, 2.5vw, 18px);
+            line-height: 1.6;
+            margin-bottom: 28px;
+            color: #f1f5f9;
+        }
+
+        .question-text code {
+            background: rgba(124, 58, 237, 0.15);
+            border: 1px solid rgba(124, 58, 237, 0.3);
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 0.9em;
+            color: #c4b5fd;
+        }
+
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .option {
+            background: var(--surface2);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            border-radius: 8px;
+            padding: 16px 20px;
+            cursor: pointer;
+            display: flex;
+            align-items: flex-start;
+            gap: 14px;
+            transition: all 0.2s ease;
+            font-size: 14px;
+            line-height: 1.5;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .option:hover:not(.disabled) {
+            border-color: rgba(124, 58, 237, 0.5);
+            background: rgba(124, 58, 237, 0.08);
+            transform: translateX(4px);
+        }
+
+        .option.selected {
+            border-color: var(--accent);
+            background: rgba(124, 58, 237, 0.12);
+        }
+
+        .option.correct {
+            border-color: var(--correct);
+            background: rgba(6, 214, 160, 0.08);
+            animation: pulse-correct 0.4s ease;
+        }
+
+        .option.wrong {
+            border-color: var(--wrong);
+            background: rgba(247, 37, 133, 0.08);
+            animation: shake 0.4s ease;
+        }
+
+        .option.disabled {
+            cursor: default;
+        }
+
+        @keyframes pulse-correct {
+            0% {
+                transform: scale(1);
+            }
+
+            50% {
+                transform: scale(1.01);
+            }
+
+            100% {
+                transform: scale(1);
+            }
+        }
+
+        @keyframes shake {
+
+            0%,
+            100% {
+                transform: translateX(0);
+            }
+
+            25% {
+                transform: translateX(-6px);
+            }
+
+            75% {
+                transform: translateX(6px);
+            }
+        }
+
+        .option-letter {
+            min-width: 28px;
+            height: 28px;
+            border-radius: 4px;
+            background: rgba(255, 255, 255, 0.06);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 12px;
+            flex-shrink: 0;
+            margin-top: 1px;
+        }
+
+        .option.correct .option-letter {
+            background: var(--correct);
+            color: #000;
+        }
+
+        .option.wrong .option-letter {
+            background: var(--wrong);
+            color: #fff;
+        }
+
+        .option.selected:not(.correct):not(.wrong) .option-letter {
+            background: var(--accent);
+            color: #fff;
+        }
+
+        .explanation {
+            margin-top: 20px;
+            padding: 16px 20px;
+            background: rgba(6, 214, 160, 0.06);
+            border: 1px solid rgba(6, 214, 160, 0.2);
+            border-radius: 8px;
+            font-size: 13px;
+            line-height: 1.7;
+            color: #94a3b8;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .explanation strong {
+            color: var(--accent2);
+        }
+
+        .explanation code {
+            background: rgba(6, 214, 160, 0.1);
+            padding: 1px 6px;
+            border-radius: 3px;
+            color: var(--accent2);
+            font-size: 0.9em;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(8px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .nav-buttons {
+            display: flex;
+            justify-content: flex-end;
+            margin-top: 28px;
+            max-width: 760px;
+            width: 100%;
+        }
+
+        .btn {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 13px;
+            font-weight: 700;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            padding: 12px 28px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .btn-primary {
+            background: var(--accent);
+            color: #fff;
+        }
+
+        .btn-primary:hover {
+            background: #6d28d9;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(124, 58, 237, 0.35);
+        }
+
+        .btn-primary:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        /* Results */
+        .results {
+            max-width: 760px;
+            width: 100%;
+            text-align: center;
+            animation: slideIn 0.5s ease;
+        }
+
+        .score-circle {
+            width: 160px;
+            height: 160px;
+            border-radius: 50%;
+            margin: 0 auto 32px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+
+        .score-circle::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            border-radius: 50%;
+            background: conic-gradient(var(--accent2) var(--pct), var(--surface2) 0);
+            padding: 3px;
+            -webkit-mask: radial-gradient(farthest-side, transparent calc(100% - 3px), #fff 0);
+            mask: radial-gradient(farthest-side, transparent calc(100% - 3px), #fff 0);
+        }
+
+        .score-number {
+            font-family: 'Syne', sans-serif;
+            font-size: 48px;
+            font-weight: 800;
+            color: var(--accent2);
+        }
+
+        .score-label {
+            font-size: 12px;
+            color: var(--muted);
+        }
+
+        .grade {
+            font-family: 'Syne', sans-serif;
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .results-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin: 32px 0;
+        }
+
+        .result-item {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 12px 16px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 13px;
+        }
+
+        .result-item .label {
+            color: var(--muted);
+        }
+
+        .result-item .value {
+            font-weight: 700;
+        }
+
+        .btn-restart {
+            background: transparent;
+            border: 1px solid var(--accent);
+            color: var(--accent);
+        }
+
+        .btn-restart:hover {
+            background: var(--accent);
+            color: #fff;
+            transform: translateY(-2px);
+        }
+
+        .dots {
+            display: flex;
+            gap: 6px;
+            flex-wrap: wrap;
+            justify-content: center;
+            margin: 20px 0;
+        }
+
+        .dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: var(--surface2);
+            border: 1px solid var(--border);
+            transition: all 0.3s ease;
+        }
+
+        .dot.done-correct {
+            background: var(--correct);
+            border-color: var(--correct);
+        }
+
+        .dot.done-wrong {
+            background: var(--wrong);
+            border-color: var(--wrong);
+        }
+
+        .dot.current {
+            background: var(--accent);
+            border-color: var(--accent);
+        }
+    </style>
+</head>
+
+<body>
+
+    <header>
+        <div class="badge">QCM Technique</div>
+        <h1>React · API REST · MySQL<br>Authentification</h1>
+        <p class="subtitle">20 questions · Niveaux avancé & débutant · 4 propositions</p>
+    </header>
+
+    <div class="progress-bar-container">
+        <div class="progress-info">
+            <span id="qLabel">Question 1 / 20</span>
+            <span id="scoreLabel">Score : 0</span>
+        </div>
+        <div class="progress-track">
+            <div class="progress-fill" id="progressFill" style="width:0%"></div>
+        </div>
+        <div class="dots" id="dots"></div>
+    </div>
+
+    <div id="quizArea">
+        <div class="quiz-card" id="card">
+            <div id="catTag"></div>
+            <div class="question-text" id="questionText"></div>
+            <div class="options" id="options"></div>
+            <div id="explanation" style="display:none" class="explanation"></div>
+        </div>
+        <div class="nav-buttons">
+            <button class="btn btn-primary" id="nextBtn" disabled>Suivant →</button>
+        </div>
+    </div>
+
+    <div class="results" id="resultsArea" style="display:none">
+        <div class="score-circle" id="scoreCircle">
+            <span class="score-number" id="finalScore">0</span>
+            <span class="score-label">/ 20</span>
+        </div>
+        <div class="grade" id="gradeText"></div>
+        <p style="color:var(--muted);font-size:13px;margin-bottom:24px" id="gradeMsg"></p>
+        <div class="results-grid" id="resultsGrid"></div>
+        <button class="btn btn-restart btn-primary" onclick="restartQuiz()">↺ Recommencer</button>
+    </div>
+
+    <script>
+        const questions = [
+            // ── REACT AVANCÉ ──────────────────────────────────────────────────────────
+            {
+                cat: "React", catClass: "cat-react",
+                q: "Quel hook React permet de mémoriser une <strong>valeur calculée</strong> et d'éviter des recalculs coûteux ?",
+                options: ["useCallback", "useRef", "useMemo", "useReducer"],
+                answer: 2,
+                explanation: "<strong>useMemo</strong> mémorise le résultat d'un calcul entre les renders. Il ne recalcule que lorsque ses dépendances changent. <code>useCallback</code> mémorise une <em>fonction</em>, pas une valeur."
+            },
+            {
+                cat: "React", catClass: "cat-react",
+                q: "Dans React 18, que fait <code>startTransition</code> ?",
+                options: [
+                    "Il déclenche une animation CSS automatiquement",
+                    "Il marque une mise à jour d'état comme non-urgente pour éviter de bloquer l'UI",
+                    "Il remplace useEffect pour les effets asynchrones",
+                    "Il active le mode Concurrent uniquement pour les formulaires"
+                ],
+                answer: 1,
+                explanation: "<strong>startTransition</strong> indique à React que la mise à jour d'état qu'il encapsule est <em>non-urgente</em>. React peut l'interrompre pour traiter des mises à jour plus prioritaires (ex. saisie clavier), améliorant la réactivité."
+            },
+            {
+                cat: "React", catClass: "cat-react",
+                q: "Quelle est la différence principale entre <code>useEffect</code> et <code>useLayoutEffect</code> ?",
+                options: [
+                    "useLayoutEffect s'exécute uniquement côté serveur",
+                    "useEffect s'exécute avant le rendu, useLayoutEffect après",
+                    "useLayoutEffect s'exécute de manière synchrone après les mutations DOM, avant que le navigateur peigne l'écran",
+                    "Il n'y a aucune différence fonctionnelle dans React 18"
+                ],
+                answer: 2,
+                explanation: "<strong>useLayoutEffect</strong> est synchrone et s'exécute <em>après</em> les mutations DOM mais <em>avant</em> que le navigateur affiche les changements. Utile pour mesurer le DOM. <code>useEffect</code> est asynchrone et s'exécute après la peinture."
+            },
+            {
+                cat: "React", catClass: "cat-react",
+                q: "Qu'est-ce que le <strong>prop drilling</strong> et quelle est la solution React native recommandée ?",
+                options: [
+                    "Un bug de performance résolu par useMemo",
+                    "La transmission de props à travers plusieurs niveaux de composants ; solution : React Context API",
+                    "Une mauvaise pratique de nommage des props ; solution : TypeScript",
+                    "Un problème de rendu infini résolu par useCallback"
+                ],
+                answer: 1,
+                explanation: "Le <strong>prop drilling</strong> consiste à passer des props à travers de nombreux composants intermédiaires. La solution native de React est le <strong>Context API</strong> (<code>createContext</code> + <code>useContext</code>). Pour des états complexes, Redux ou Zustand peuvent aussi être utilisés."
+            },
+            {
+                cat: "React", catClass: "cat-react",
+                q: "Dans React, que retourne <code>useReducer</code> ?",
+                options: [
+                    "Un objet contenant { state, setState }",
+                    "Une fonction dispatch et un état initial uniquement",
+                    "Un tableau [state, dispatch] similaire à useState mais avec une fonction réductrice",
+                    "Une promesse résolue avec le nouvel état"
+                ],
+                answer: 2,
+                explanation: "<code>useReducer(reducer, initialState)</code> retourne <strong>[state, dispatch]</strong>. On appelle <code>dispatch(action)</code> pour déclencher la fonction <code>reducer(state, action)</code> qui retourne le nouvel état. Idéal pour une logique d'état complexe."
+            },
+
+            // ── API REST AVANCÉ ───────────────────────────────────────────────────────
+            {
+                cat: "API REST", catClass: "cat-api",
+                q: "Quelle méthode HTTP doit être utilisée pour une <strong>mise à jour partielle</strong> d'une ressource ?",
+                options: ["PUT", "POST", "PATCH", "UPDATE"],
+                answer: 2,
+                explanation: "<strong>PATCH</strong> est utilisé pour des mises à jour <em>partielles</em>. <code>PUT</code> remplace la ressource entière. <code>UPDATE</code> n'est pas une méthode HTTP standard. <code>POST</code> crée une nouvelle ressource."
+            },
+            {
+                cat: "API REST", catClass: "cat-api",
+                q: "Quel code de statut HTTP est renvoyé quand une ressource est créée avec succès via POST ?",
+                options: ["200 OK", "201 Created", "204 No Content", "202 Accepted"],
+                answer: 1,
+                explanation: "<strong>201 Created</strong> indique qu'une ressource a été créée. La réponse inclut généralement un header <code>Location</code> pointant vers la nouvelle ressource. <code>200 OK</code> est pour les succès généraux, <code>204</code> pour un succès sans corps de réponse."
+            },
+            {
+                cat: "API REST", catClass: "cat-api",
+                q: "Qu'est-ce que la <strong>pagination par curseur</strong> (cursor-based) par rapport à la pagination par offset ?",
+                options: [
+                    "C'est la même chose, seulement un terme différent",
+                    "Elle utilise un pointeur opaque vers un élément spécifique, plus efficace et stable pour des données dynamiques",
+                    "Elle pagine par pages de taille fixe avec un numéro de page",
+                    "Elle ne fonctionne qu'avec des bases de données NoSQL"
+                ],
+                answer: 1,
+                explanation: "La <strong>pagination par curseur</strong> utilise un identifiant (ex. <code>?cursor=abc123</code>) pointant vers le dernier élément vu. Contrairement à l'offset, elle reste stable quand des données sont ajoutées/supprimées et est plus performante sur de grands datasets."
+            },
+            {
+                cat: "API REST", catClass: "cat-api",
+                q: "Dans une API REST, le header <code>ETag</code> sert à :",
+                options: [
+                    "Identifier le type de contenu de la réponse",
+                    "Compresser la réponse HTTP",
+                    "Permettre la validation du cache et les mises à jour conditionnelles via If-None-Match",
+                    "Définir la durée de vie du token d'authentification"
+                ],
+                answer: 2,
+                explanation: "<strong>ETag</strong> (Entity Tag) est un identifiant de version d'une ressource. Le client peut envoyer <code>If-None-Match: &lt;etag&gt;</code> ; si la ressource n'a pas changé, le serveur répond <strong>304 Not Modified</strong> sans corps, économisant de la bande passante."
+            },
+            {
+                cat: "API REST", catClass: "cat-api",
+                q: "Que signifie <strong>HATEOAS</strong> dans une API REST ?",
+                options: [
+                    "Un protocole de sécurité remplaçant HTTPS pour les API",
+                    "Hypermedia As The Engine Of Application State : les réponses incluent des liens vers les actions disponibles",
+                    "Un format d'encodage alternatif au JSON",
+                    "Une méthode d'authentification basée sur les en-têtes"
+                ],
+                answer: 1,
+                explanation: "<strong>HATEOAS</strong> est une contrainte REST où chaque réponse contient des <em>hyperliens</em> décrivant les prochaines actions disponibles. Exemple : une réponse de commande inclut des liens <code>pay</code>, <code>cancel</code>. Le client découvre l'API dynamiquement."
+            },
+
+            // ── MYSQL AVANCÉ ──────────────────────────────────────────────────────────
+            {
+                cat: "MySQL", catClass: "cat-mysql",
+                q: "Quelle est la différence entre <code>INNER JOIN</code> et <code>LEFT JOIN</code> ?",
+                options: [
+                    "INNER JOIN retourne toutes les lignes, LEFT JOIN uniquement les correspondances",
+                    "INNER JOIN retourne uniquement les lignes avec correspondance des deux côtés ; LEFT JOIN retourne toutes les lignes de la table gauche, avec NULL si aucune correspondance",
+                    "LEFT JOIN est plus rapide qu'INNER JOIN dans tous les cas",
+                    "Il n'y a pas de différence dans MySQL 8"
+                ],
+                answer: 1,
+                explanation: "<strong>INNER JOIN</strong> retourne uniquement les lignes qui ont une correspondance dans les deux tables. <strong>LEFT JOIN</strong> retourne toutes les lignes de la table gauche, et <code>NULL</code> pour les colonnes de la table droite quand il n'y a pas de correspondance."
+            },
+            {
+                cat: "MySQL", catClass: "cat-mysql",
+                q: "Qu'est-ce qu'un index <strong>composite</strong> en MySQL et quel est son avantage ?",
+                options: [
+                    "Un index sur des colonnes de type JSON uniquement",
+                    "Un index créé sur plusieurs colonnes simultanément, optimisant les requêtes filtrant sur ces colonnes dans l'ordre de l'index",
+                    "Un index qui remplace automatiquement la clé primaire",
+                    "Un index qui se met à jour en temps réel via des triggers"
+                ],
+                answer: 1,
+                explanation: "Un index <strong>composite</strong> couvre plusieurs colonnes : <code>INDEX(col1, col2, col3)</code>. MySQL peut l'utiliser pour les requêtes filtrant sur <code>col1</code>, ou <code>col1 + col2</code>, etc. Respectez la règle du <em>préfixe le plus à gauche</em> pour en bénéficier."
+            },
+            {
+                cat: "MySQL", catClass: "cat-mysql",
+                q: "Dans MySQL, quelle est la différence entre <code>TRUNCATE</code> et <code>DELETE</code> sans clause WHERE ?",
+                options: [
+                    "TRUNCATE supprime la table entière, DELETE uniquement les données",
+                    "TRUNCATE réinitialise l'AUTO_INCREMENT et est plus rapide (non journalisé ligne par ligne) ; DELETE est transactionnel et journalisé",
+                    "DELETE est irréversible, TRUNCATE peut être annulé avec ROLLBACK",
+                    "Il n'y a aucune différence fonctionnelle"
+                ],
+                answer: 1,
+                explanation: "<strong>TRUNCATE</strong> vide la table instantanément, réinitialise l'<code>AUTO_INCREMENT</code> et ne journalise pas chaque ligne (plus rapide). <strong>DELETE</strong> sans WHERE est transactionnel, journalisé ligne par ligne, et peut être annulé avec <code>ROLLBACK</code>."
+            },
+            {
+                cat: "MySQL", catClass: "cat-mysql",
+                q: "Qu'est-ce que le <strong>Query Execution Plan</strong> et comment l'analyser en MySQL ?",
+                options: [
+                    "Un fichier de configuration pour optimiser MySQL",
+                    "Le plan détaillant comment MySQL exécute une requête, analysé avec la commande EXPLAIN",
+                    "Un rapport généré automatiquement dans les logs d'erreur",
+                    "Une fonctionnalité disponible uniquement dans MySQL Enterprise"
+                ],
+                answer: 1,
+                explanation: "Le <strong>Query Execution Plan</strong> montre comment MySQL traite une requête. On l'obtient avec <code>EXPLAIN SELECT ...</code> (ou <code>EXPLAIN ANALYZE</code> dans MySQL 8). Il révèle si des index sont utilisés, le type de jointure, et le nombre de lignes examinées."
+            },
+            {
+                cat: "MySQL", catClass: "cat-mysql",
+                q: "Quelle propriété ACID garantit qu'une transaction <strong>réussie est permanente</strong> même en cas de panne ?",
+                options: ["Atomicité", "Cohérence", "Isolation", "Durabilité"],
+                answer: 3,
+                explanation: "<strong>Durabilité</strong> (Durability) : une fois une transaction validée (<code>COMMIT</code>), les données sont écrites de manière permanente, même en cas de panne système. MySQL InnoDB utilise un <em>redo log</em> pour garantir cette propriété."
+            },
+
+            // ── AUTHENTIFICATION DÉBUTANT ─────────────────────────────────────────────
+            {
+                cat: "Auth", catClass: "cat-auth",
+                q: "Qu'est-ce qu'un <strong>JWT</strong> (JSON Web Token) ?",
+                options: [
+                    "Un algorithme de hashage de mots de passe",
+                    "Une base de données de sessions utilisateur",
+                    "Un token auto-contenu composé de 3 parties (header.payload.signature) utilisé pour l'authentification stateless",
+                    "Un protocole de connexion sécurisée remplaçant HTTPS"
+                ],
+                answer: 2,
+                explanation: "Un <strong>JWT</strong> est un token encodé en Base64 composé de 3 parties séparées par des points : le <em>header</em> (algorithme), le <em>payload</em> (données), et la <em>signature</em>. Le serveur n'a pas besoin de stocker le token, il le vérifie avec sa clé secrète."
+            },
+            {
+                cat: "Auth", catClass: "cat-auth",
+                q: "Pourquoi ne faut-il <strong>jamais</strong> stocker un mot de passe en clair dans une base de données ?",
+                options: [
+                    "Car cela prend trop d'espace disque",
+                    "Car MySQL ne supporte pas le type TEXT pour les mots de passe",
+                    "Car en cas de fuite de données, tous les mots de passe seraient exposés directement et pourraient être réutilisés sur d'autres services",
+                    "Car les navigateurs bloquent automatiquement les sites qui le font"
+                ],
+                answer: 2,
+                explanation: "Stocker les mots de passe en clair est une faille critique. En cas de fuite, les attaquants ont accès à tous les comptes. On utilise des fonctions de hashage adaptées comme <strong>bcrypt</strong>, <strong>argon2</strong> ou <strong>scrypt</strong> qui sont lentes et incluent un <em>salt</em>."
+            },
+            {
+                cat: "Auth", catClass: "cat-auth",
+                q: "Quelle est la différence entre <strong>authentification</strong> et <strong>autorisation</strong> ?",
+                options: [
+                    "Ce sont deux termes synonymes dans le contexte de la sécurité web",
+                    "L'authentification vérifie QUI vous êtes ; l'autorisation détermine CE QUE vous avez le droit de faire",
+                    "L'authentification est côté client, l'autorisation est côté serveur",
+                    "L'autorisation s'effectue toujours avant l'authentification"
+                ],
+                answer: 1,
+                explanation: "<strong>Authentification</strong> (AuthN) : vérifier l'identité (login/mot de passe, token). <strong>Autorisation</strong> (AuthZ) : vérifier les permissions de cette identité (peut-il accéder à cette ressource ?). On ne peut pas autoriser sans d'abord authentifier."
+            },
+            {
+                cat: "Auth", catClass: "cat-auth",
+                q: "Qu'est-ce que le <strong>HTTPS</strong> et pourquoi est-il essentiel pour l'authentification ?",
+                options: [
+                    "Un langage de programmation pour les formulaires de connexion",
+                    "Une version plus rapide de HTTP sans rapport avec la sécurité",
+                    "HTTP sécurisé via TLS/SSL : chiffre les données en transit, empêchant l'interception des identifiants par un attaquant (man-in-the-middle)",
+                    "Un protocole utilisé uniquement pour les paiements en ligne"
+                ],
+                answer: 2,
+                explanation: "<strong>HTTPS</strong> utilise <em>TLS</em> pour chiffrer la communication entre le client et le serveur. Sans HTTPS, un attaquant sur le même réseau pourrait intercepter les identifiants, tokens ou cookies (attaque <em>man-in-the-middle</em>). Essentiel pour tout système d'authentification."
+            },
+            {
+                cat: "Auth", catClass: "cat-auth",
+                q: "Qu'est-ce que le <strong>2FA</strong> (authentification à deux facteurs) ?",
+                options: [
+                    "Utiliser deux mots de passe différents pour se connecter",
+                    "Se connecter depuis deux appareils simultanément",
+                    "Ajouter une seconde couche de vérification (ex. code SMS, TOTP) en plus du mot de passe, combinant quelque chose que vous <em>savez</em> et quelque chose que vous <em>avez</em>",
+                    "Chiffrer le mot de passe deux fois avant de l'envoyer"
+                ],
+                answer: 2,
+                explanation: "Le <strong>2FA</strong> ajoute un second facteur d'authentification. Même si le mot de passe est compromis, un attaquant ne peut pas se connecter sans le second facteur. Les types : <em>SMS</em>, <em>TOTP</em> (Google Authenticator), <em>clé physique</em> (YubiKey). Combinaison de « ce que vous savez » + « ce que vous avez »."
+            }
+        ];
+
+        let current = 0;
+        let score = 0;
+        let answered = [];
+        let dotStatus = new Array(questions.length).fill('');
+
+        function renderDots() {
+            const c = document.getElementById('dots');
+            c.innerHTML = '';
+            dotStatus.forEach((s, i) => {
+                const d = document.createElement('div');
+                d.className = 'dot' + (s ? ' done-' + s : '') + (i === current && !s ? ' current' : '');
+                c.appendChild(d);
+            });
+        }
+
+        function renderQuestion() {
+            const q = questions[current];
+            document.getElementById('qLabel').textContent = `Question ${current + 1} / ${questions.length}`;
+            document.getElementById('scoreLabel').textContent = `Score : ${score}`;
+            document.getElementById('progressFill').style.width = `${(current / questions.length) * 100}%`;
+
+            const tag = document.getElementById('catTag');
+            tag.className = `category-tag ${q.catClass}`;
+            tag.textContent = q.cat;
+
+            document.getElementById('questionText').innerHTML = q.q;
+
+            const opts = document.getElementById('options');
+            opts.innerHTML = '';
+            const letters = ['A', 'B', 'C', 'D'];
+            q.options.forEach((opt, i) => {
+                const div = document.createElement('div');
+                div.className = 'option';
+                div.innerHTML = `<div class="option-letter">${letters[i]}</div><div>${opt}</div>`;
+                div.addEventListener('click', () => selectOption(i));
+                opts.appendChild(div);
+            });
+
+            document.getElementById('explanation').style.display = 'none';
+            document.getElementById('nextBtn').disabled = true;
+            renderDots();
+        }
+
+        function selectOption(idx) {
+            if (answered[current] !== undefined) return;
+            answered[current] = idx;
+
+            const q = questions[current];
+            const opts = document.querySelectorAll('.option');
+
+            opts.forEach((o, i) => {
+                o.classList.add('disabled');
+                if (i === q.answer) o.classList.add('correct');
+                else if (i === idx && idx !== q.answer) o.classList.add('wrong');
+            });
+
+            if (idx === q.answer) {
+                score++;
+                dotStatus[current] = 'correct';
+            } else {
+                dotStatus[current] = 'wrong';
+            }
+
+            renderDots();
+            document.getElementById('scoreLabel').textContent = `Score : ${score}`;
+
+            const exp = document.getElementById('explanation');
+            exp.style.display = 'block';
+            exp.innerHTML = `💡 ${q.explanation}`;
+
+            document.getElementById('nextBtn').disabled = false;
+        }
+
+        document.getElementById('nextBtn').addEventListener('click', () => {
+            current++;
+            if (current >= questions.length) {
+                showResults();
+            } else {
+                const card = document.getElementById('card');
+                card.style.animation = 'none';
+                requestAnimationFrame(() => {
+                    card.style.animation = 'slideIn 0.4s ease';
+                    renderQuestion();
+                });
+            }
+        });
+
+        function showResults() {
+            document.getElementById('quizArea').style.display = 'none';
+            document.getElementById('resultsArea').style.display = 'block';
+
+            const pct = Math.round((score / questions.length) * 100);
+            document.getElementById('finalScore').textContent = score;
+            document.getElementById('scoreCircle').style.setProperty('--pct', `${pct}%`);
+
+            let grade, msg;
+            if (pct >= 90) { grade = '🏆 Expert'; msg = 'Maîtrise exceptionnelle !'; }
+            else if (pct >= 75) { grade = '🥇 Avancé'; msg = 'Très bon niveau, continue !'; }
+            else if (pct >= 60) { grade = '🥈 Intermédiaire'; msg = 'Bonne base, encore quelques lacunes.'; }
+            else if (pct >= 40) { grade = '🥉 Débutant+'; msg = 'Des révisions s\'imposent.'; }
+            else { grade = '📚 À revoir'; msg = 'Reprends les fondamentaux.'; }
+
+            document.getElementById('gradeText').textContent = grade;
+            document.getElementById('gradeMsg').textContent = msg;
+
+            const cats = {};
+            questions.forEach((q, i) => {
+                if (!cats[q.cat]) cats[q.cat] = { ok: 0, total: 0 };
+                cats[q.cat].total++;
+                if (answered[i] === q.answer) cats[q.cat].ok++;
+            });
+
+            const grid = document.getElementById('resultsGrid');
+            grid.innerHTML = '';
+            Object.entries(cats).forEach(([cat, data]) => {
+                const item = document.createElement('div');
+                item.className = 'result-item';
+                const catPct = Math.round((data.ok / data.total) * 100);
+                item.innerHTML = `<span class="label">${cat}</span><span class="value" style="color:${catPct >= 60 ? 'var(--correct)' : 'var(--wrong)'}">${data.ok}/${data.total} (${catPct}%)</span>`;
+                grid.appendChild(item);
+            });
+        }
+
+        function restartQuiz() {
+            current = 0; score = 0; answered = []; dotStatus = new Array(questions.length).fill('');
+            document.getElementById('resultsArea').style.display = 'none';
+            document.getElementById('quizArea').style.display = 'block';
+            renderQuestion();
+        }
+
+        renderQuestion();
+    </script>
+</body>
+
+</html>
