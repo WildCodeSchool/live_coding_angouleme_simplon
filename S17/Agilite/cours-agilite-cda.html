@@ -1,0 +1,1782 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Agilité — Cours CDA</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0c0f1a;
+    --bg2: #131726;
+    --bg3: #1a1f30;
+    --surface: #1e2538;
+    --surface2: #252d42;
+    --border: rgba(255,255,255,0.08);
+    --border2: rgba(255,255,255,0.14);
+    --text: #e8eaf2;
+    --text2: #9ea8c0;
+    --text3: #6b7594;
+    --accent: #4f8ef7;
+    --accent2: #7c3aed;
+    --teal: #0fd8b0;
+    --coral: #ff6b6b;
+    --amber: #f59e0b;
+    --green: #22c55e;
+    --pink: #e879f9;
+    --glow: rgba(79,142,247,0.15);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.7;
+    font-size: 16px;
+  }
+
+  /* SCROLLBAR */
+  ::-webkit-scrollbar { width: 6px; }
+  ::-webkit-scrollbar-track { background: var(--bg); }
+  ::-webkit-scrollbar-thumb { background: var(--surface2); border-radius: 3px; }
+
+  /* LAYOUT */
+  .wrapper { display: flex; min-height: 100vh; }
+
+  /* SIDEBAR */
+  .sidebar {
+    width: 280px;
+    min-width: 280px;
+    background: var(--bg2);
+    border-right: 1px solid var(--border);
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    overflow-y: auto;
+    padding: 0 0 2rem;
+    flex-shrink: 0;
+  }
+
+  .sidebar-logo {
+    padding: 1.5rem 1.5rem 1rem;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 1rem;
+  }
+
+  .sidebar-logo .badge {
+    font-family: 'Syne', sans-serif;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    display: block;
+    margin-bottom: 4px;
+  }
+
+  .sidebar-logo h1 {
+    font-family: 'Syne', sans-serif;
+    font-size: 22px;
+    font-weight: 800;
+    color: var(--text);
+  }
+
+  .nav-section {
+    padding: 0 0.75rem;
+    margin-bottom: 0.25rem;
+  }
+
+  .nav-section-title {
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--text3);
+    padding: 0.5rem 0.75rem 0.25rem;
+  }
+
+  .nav-link {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 0.45rem 0.75rem;
+    border-radius: 8px;
+    font-size: 13.5px;
+    color: var(--text2);
+    text-decoration: none;
+    transition: all 0.15s;
+    cursor: pointer;
+  }
+
+  .nav-link:hover { background: var(--surface); color: var(--text); }
+  .nav-link.active { background: var(--glow); color: var(--accent); }
+
+  .nav-dot {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: currentColor;
+    opacity: 0.5;
+    flex-shrink: 0;
+  }
+
+  /* MAIN */
+  .main {
+    flex: 1;
+    overflow-y: auto;
+    scroll-behavior: smooth;
+  }
+
+  /* HERO */
+  .hero {
+    background: linear-gradient(135deg, #0c0f1a 0%, #0f1628 40%, #11192e 100%);
+    padding: 5rem 4rem 4rem;
+    position: relative;
+    overflow: hidden;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .hero::before {
+    content: '';
+    position: absolute;
+    top: -100px; right: -100px;
+    width: 500px; height: 500px;
+    background: radial-gradient(circle, rgba(79,142,247,0.08) 0%, transparent 70%);
+    pointer-events: none;
+  }
+
+  .hero::after {
+    content: '';
+    position: absolute;
+    bottom: -80px; left: 200px;
+    width: 400px; height: 400px;
+    background: radial-gradient(circle, rgba(124,58,237,0.06) 0%, transparent 70%);
+    pointer-events: none;
+  }
+
+  .hero-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--accent);
+    background: rgba(79,142,247,0.1);
+    border: 1px solid rgba(79,142,247,0.2);
+    padding: 4px 12px;
+    border-radius: 20px;
+    margin-bottom: 1.5rem;
+  }
+
+  .hero h2 {
+    font-family: 'Syne', sans-serif;
+    font-size: clamp(2.2rem, 4vw, 3.5rem);
+    font-weight: 800;
+    line-height: 1.1;
+    margin-bottom: 1rem;
+    color: var(--text);
+  }
+
+  .hero h2 span {
+    background: linear-gradient(90deg, var(--accent), var(--teal));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .hero p {
+    font-size: 17px;
+    color: var(--text2);
+    max-width: 600px;
+    margin-bottom: 2rem;
+    font-weight: 300;
+  }
+
+  .hero-stats {
+    display: flex;
+    gap: 2.5rem;
+    flex-wrap: wrap;
+  }
+
+  .stat {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .stat-num {
+    font-family: 'Syne', sans-serif;
+    font-size: 26px;
+    font-weight: 700;
+    color: var(--text);
+  }
+
+  .stat-label {
+    font-size: 12px;
+    color: var(--text3);
+    letter-spacing: 0.05em;
+  }
+
+  /* SECTIONS */
+  .content {
+    padding: 3rem 4rem;
+    max-width: 960px;
+  }
+
+  .section {
+    margin-bottom: 5rem;
+    scroll-margin-top: 2rem;
+  }
+
+  .section-header {
+    display: flex;
+    align-items: flex-start;
+    gap: 1rem;
+    margin-bottom: 2rem;
+  }
+
+  .section-num {
+    font-family: 'Syne', sans-serif;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    color: var(--accent);
+    background: rgba(79,142,247,0.1);
+    border: 1px solid rgba(79,142,247,0.2);
+    padding: 3px 10px;
+    border-radius: 20px;
+    white-space: nowrap;
+    margin-top: 5px;
+  }
+
+  .section-title {
+    font-family: 'Syne', sans-serif;
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: var(--text);
+    line-height: 1.2;
+  }
+
+  .section-subtitle {
+    font-size: 14px;
+    color: var(--text3);
+    margin-top: 4px;
+    font-weight: 400;
+  }
+
+  /* CARDS */
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 1.5rem;
+    margin-bottom: 1rem;
+    transition: border-color 0.2s;
+  }
+
+  .card:hover { border-color: var(--border2); }
+
+  .card h4 {
+    font-family: 'Syne', sans-serif;
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--text);
+    margin-bottom: 0.5rem;
+  }
+
+  .card p { font-size: 14px; color: var(--text2); line-height: 1.65; }
+
+  /* GRID */
+  .grid-2 { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem; }
+  .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; }
+  .grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem; }
+
+  /* HIGHLIGHT CARD */
+  .highlight-card {
+    background: linear-gradient(135deg, rgba(79,142,247,0.08), rgba(124,58,237,0.08));
+    border: 1px solid rgba(79,142,247,0.2);
+    border-radius: 14px;
+    padding: 1.5rem 2rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .highlight-card h4 {
+    font-family: 'Syne', sans-serif;
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--accent);
+    margin-bottom: 0.75rem;
+  }
+
+  /* COLOR ACCENT CARDS */
+  .card-teal { border-left: 3px solid var(--teal); }
+  .card-coral { border-left: 3px solid var(--coral); }
+  .card-amber { border-left: 3px solid var(--amber); }
+  .card-purple { border-left: 3px solid var(--accent2); }
+  .card-green { border-left: 3px solid var(--green); }
+  .card-pink { border-left: 3px solid var(--pink); }
+  .card-blue { border-left: 3px solid var(--accent); }
+
+  /* ICON CARDS */
+  .icon-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 1.25rem;
+  }
+
+  .icon-card .icon {
+    width: 40px; height: 40px;
+    border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 18px;
+    margin-bottom: 0.75rem;
+  }
+
+  .icon-card h4 {
+    font-family: 'Syne', sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text);
+    margin-bottom: 0.4rem;
+  }
+
+  .icon-card p { font-size: 13px; color: var(--text2); }
+
+  /* TABLE */
+  .table-wrapper {
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    overflow: hidden;
+    margin-bottom: 1.5rem;
+  }
+
+  table { width: 100%; border-collapse: collapse; }
+
+  thead { background: var(--surface); }
+  thead th {
+    padding: 0.75rem 1rem;
+    text-align: left;
+    font-family: 'Syne', sans-serif;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--text3);
+    border-bottom: 1px solid var(--border);
+  }
+
+  tbody tr { border-bottom: 1px solid var(--border); }
+  tbody tr:last-child { border-bottom: none; }
+  tbody tr:hover { background: rgba(255,255,255,0.02); }
+
+  tbody td {
+    padding: 0.75rem 1rem;
+    font-size: 14px;
+    color: var(--text2);
+  }
+
+  tbody td:first-child { color: var(--text); font-weight: 500; }
+
+  /* BADGE */
+  .badge {
+    display: inline-block;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    padding: 2px 8px;
+    border-radius: 20px;
+  }
+
+  .badge-blue { background: rgba(79,142,247,0.12); color: var(--accent); }
+  .badge-teal { background: rgba(15,216,176,0.12); color: var(--teal); }
+  .badge-coral { background: rgba(255,107,107,0.12); color: var(--coral); }
+  .badge-amber { background: rgba(245,158,11,0.12); color: var(--amber); }
+  .badge-purple { background: rgba(124,58,237,0.12); color: var(--pink); }
+  .badge-green { background: rgba(34,197,94,0.12); color: var(--green); }
+
+  /* TIMELINE */
+  .timeline { position: relative; padding-left: 2rem; }
+  .timeline::before {
+    content: '';
+    position: absolute;
+    left: 7px; top: 8px; bottom: 8px;
+    width: 2px;
+    background: linear-gradient(to bottom, var(--accent), var(--accent2), var(--teal));
+    border-radius: 2px;
+  }
+
+  .timeline-item {
+    position: relative;
+    margin-bottom: 1.5rem;
+    padding-left: 1rem;
+  }
+
+  .timeline-dot {
+    position: absolute;
+    left: -2rem;
+    top: 5px;
+    width: 16px; height: 16px;
+    border-radius: 50%;
+    background: var(--bg2);
+    border: 2px solid var(--accent);
+    display: flex; align-items: center; justify-content: center;
+  }
+
+  .timeline-dot::after {
+    content: '';
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: var(--accent);
+  }
+
+  .timeline-year {
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--accent);
+    letter-spacing: 0.08em;
+    margin-bottom: 3px;
+  }
+
+  .timeline-title {
+    font-family: 'Syne', sans-serif;
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--text);
+    margin-bottom: 4px;
+  }
+
+  .timeline-desc { font-size: 13px; color: var(--text2); }
+
+  /* MANIFESTO */
+  .manifesto-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1px; background: var(--border); border-radius: 14px; overflow: hidden; }
+
+  .manifesto-item {
+    background: var(--bg2);
+    padding: 1.5rem;
+  }
+
+  .manifesto-item .val {
+    font-family: 'Syne', sans-serif;
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--text);
+    margin-bottom: 4px;
+  }
+
+  .manifesto-item .over {
+    font-size: 13px;
+    color: var(--text3);
+  }
+
+  .manifesto-item .arrow {
+    font-size: 12px;
+    color: var(--accent);
+    margin: 4px 0;
+  }
+
+  /* PRINCIPLE CARD */
+  .principle {
+    display: flex;
+    gap: 1rem;
+    padding: 1rem;
+    border-radius: 10px;
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    margin-bottom: 0.6rem;
+  }
+
+  .principle-num {
+    font-family: 'Syne', sans-serif;
+    font-size: 20px;
+    font-weight: 800;
+    color: var(--surface2);
+    min-width: 32px;
+    line-height: 1.3;
+  }
+
+  .principle p { font-size: 14px; color: var(--text2); }
+
+  /* SCRUM BOARD */
+  .scrum-board { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0.75rem; margin-bottom: 1.5rem; }
+
+  .scrum-col { background: var(--bg2); border-radius: 10px; padding: 1rem; border: 1px solid var(--border); }
+
+  .scrum-col-title {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--text3);
+    margin-bottom: 0.75rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 2px solid;
+  }
+
+  .col-todo .scrum-col-title { border-color: var(--text3); }
+  .col-prog .scrum-col-title { border-color: var(--accent); color: var(--accent); }
+  .col-test .scrum-col-title { border-color: var(--amber); color: var(--amber); }
+  .col-done .scrum-col-title { border-color: var(--green); color: var(--green); }
+
+  .task-card {
+    background: var(--surface);
+    border-radius: 8px;
+    padding: 0.6rem 0.75rem;
+    margin-bottom: 0.5rem;
+    font-size: 12px;
+    color: var(--text2);
+    border: 1px solid var(--border);
+  }
+
+  /* QUOTE */
+  .quote {
+    background: var(--bg2);
+    border-left: 3px solid var(--teal);
+    padding: 1.25rem 1.5rem;
+    border-radius: 0 10px 10px 0;
+    margin: 1.5rem 0;
+    font-style: italic;
+    color: var(--text2);
+    font-size: 15px;
+  }
+
+  .quote cite {
+    display: block;
+    font-style: normal;
+    font-size: 12px;
+    color: var(--text3);
+    margin-top: 8px;
+    font-weight: 500;
+  }
+
+  /* DIVIDER */
+  .divider { height: 1px; background: var(--border); margin: 2rem 0; }
+
+  /* LIST STYLED */
+  .styled-list { list-style: none; }
+  .styled-list li {
+    padding: 0.5rem 0;
+    font-size: 14px;
+    color: var(--text2);
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+  }
+
+  .styled-list li::before {
+    content: '→';
+    color: var(--accent);
+    font-weight: 600;
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+
+  /* ROLES CARD */
+  .role-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 1.25rem;
+    text-align: center;
+  }
+
+  .role-avatar {
+    width: 52px; height: 52px;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 22px;
+    margin: 0 auto 0.75rem;
+  }
+
+  .role-card h4 {
+    font-family: 'Syne', sans-serif;
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--text);
+    margin-bottom: 0.5rem;
+  }
+
+  .role-card p { font-size: 12px; color: var(--text2); }
+
+  /* CEREMONIES */
+  .ceremony {
+    display: flex;
+    gap: 1.25rem;
+    padding: 1.25rem;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    margin-bottom: 0.75rem;
+  }
+
+  .ceremony-icon {
+    width: 44px; height: 44px; flex-shrink: 0;
+    border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 20px;
+  }
+
+  .ceremony-info h4 {
+    font-family: 'Syne', sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text);
+    margin-bottom: 4px;
+  }
+
+  .ceremony-info p { font-size: 13px; color: var(--text2); }
+
+  .ceremony-meta {
+    margin-left: auto;
+    text-align: right;
+    flex-shrink: 0;
+  }
+
+  .ceremony-meta .duration {
+    font-family: 'Syne', sans-serif;
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--accent);
+  }
+
+  .ceremony-meta .freq {
+    font-size: 11px;
+    color: var(--text3);
+  }
+
+  /* COMPARISON TABLE */
+  .vs-table { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+
+  .vs-col {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    overflow: hidden;
+  }
+
+  .vs-col-header {
+    padding: 1rem 1.25rem;
+    font-family: 'Syne', sans-serif;
+    font-size: 15px;
+    font-weight: 700;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .vs-col-header.waterfall { color: var(--coral); background: rgba(255,107,107,0.05); }
+  .vs-col-header.agile { color: var(--teal); background: rgba(15,216,176,0.05); }
+
+  .vs-item {
+    padding: 0.6rem 1.25rem;
+    font-size: 13px;
+    color: var(--text2);
+    border-bottom: 1px solid var(--border);
+    display: flex; align-items: center; gap: 8px;
+  }
+
+  .vs-item:last-child { border-bottom: none; }
+  .vs-item::before { content: '•'; font-size: 16px; flex-shrink: 0; }
+  .vs-col-header.waterfall ~ .vs-item::before { color: var(--coral); }
+  .vs-col-header.agile ~ .vs-item::before { color: var(--teal); }
+
+  /* KANBAN VISUAL */
+  .kanban-flow { display: flex; align-items: center; gap: 0.5rem; margin: 1rem 0; flex-wrap: wrap; }
+  .kanban-step {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 0.6rem 1rem;
+    font-size: 13px;
+    color: var(--text2);
+    display: flex; align-items: center; gap: 6px;
+  }
+
+  .kanban-arrow { color: var(--text3); font-size: 16px; }
+
+  /* VELOCITY CHART */
+  .chart-bars { display: flex; align-items: flex-end; gap: 8px; height: 120px; margin: 1rem 0; }
+  .bar-wrap { display: flex; flex-direction: column; align-items: center; gap: 4px; flex: 1; }
+  .bar {
+    width: 100%;
+    border-radius: 4px 4px 0 0;
+    background: linear-gradient(180deg, var(--accent), rgba(79,142,247,0.4));
+    transition: height 0.3s;
+  }
+
+  .bar-label { font-size: 10px; color: var(--text3); text-align: center; }
+  .bar-val { font-size: 10px; font-weight: 600; color: var(--accent); }
+
+  /* ESTIMATION CARD */
+  .poker-cards { display: flex; gap: 0.5rem; flex-wrap: wrap; margin: 0.75rem 0; }
+  .poker-card {
+    width: 44px; height: 60px;
+    background: var(--surface);
+    border: 1px solid var(--border2);
+    border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Syne', sans-serif;
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--text2);
+    cursor: default;
+    transition: all 0.15s;
+  }
+
+  .poker-card:hover { background: var(--surface2); color: var(--accent); border-color: var(--accent); transform: translateY(-4px); }
+
+  /* RESPONSIVE */
+  @media (max-width: 900px) {
+    .sidebar { display: none; }
+    .content { padding: 2rem; }
+    .hero { padding: 3rem 2rem; }
+    .grid-2, .grid-3, .grid-4 { grid-template-columns: 1fr; }
+    .scrum-board { grid-template-columns: 1fr 1fr; }
+    .vs-table { grid-template-columns: 1fr; }
+    .manifesto-grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<div class="wrapper">
+  <!-- SIDEBAR -->
+  <nav class="sidebar">
+    <div class="sidebar-logo">
+      <span class="badge">Concepteur Développeur</span>
+      <h1>Agilité</h1>
+    </div>
+    <div class="nav-section">
+      <div class="nav-section-title">Introduction</div>
+      <a class="nav-link active" href="#intro"><span class="nav-dot"></span>Qu'est-ce que l'Agilité ?</a>
+      <a class="nav-link" href="#historique"><span class="nav-dot"></span>Historique</a>
+      <a class="nav-link" href="#manifeste"><span class="nav-dot"></span>Manifeste Agile</a>
+      <a class="nav-link" href="#principes"><span class="nav-dot"></span>12 Principes</a>
+    </div>
+    <div class="nav-section">
+      <div class="nav-section-title">Méthodes</div>
+      <a class="nav-link" href="#scrum"><span class="nav-dot"></span>Scrum</a>
+      <a class="nav-link" href="#kanban"><span class="nav-dot"></span>Kanban</a>
+      <a class="nav-link" href="#xp"><span class="nav-dot"></span>Extreme Programming (XP)</a>
+      <a class="nav-link" href="#lean"><span class="nav-dot"></span>Lean & SAFe</a>
+    </div>
+    <div class="nav-section">
+      <div class="nav-section-title">Pratiques</div>
+      <a class="nav-link" href="#estimation"><span class="nav-dot"></span>Estimation & Vélocité</a>
+      <a class="nav-link" href="#backlog"><span class="nav-dot"></span>Backlog & User Stories</a>
+      <a class="nav-link" href="#ceremonies"><span class="nav-dot"></span>Cérémonies</a>
+      <a class="nav-link" href="#metrics"><span class="nav-dot"></span>Métriques Agiles</a>
+    </div>
+    <div class="nav-section">
+      <div class="nav-section-title">Avancé</div>
+      <a class="nav-link" href="#devops"><span class="nav-dot"></span>Agile & DevOps / CI-CD</a>
+      <a class="nav-link" href="#retro"><span class="nav-dot"></span>Rétrospective</a>
+      <a class="nav-link" href="#scale"><span class="nav-dot"></span>Agilité à l'échelle</a>
+      <a class="nav-link" href="#pieges"><span class="nav-dot"></span>Pièges & Anti-patterns</a>
+    </div>
+  </nav>
+
+  <!-- MAIN CONTENT -->
+  <main class="main">
+
+    <!-- HERO -->
+    <div class="hero">
+      <div class="hero-tag">📘 Cours CDA — Niveau Concepteur Développeur d'Applications</div>
+      <h2>Maîtriser<br><span>l'Agilité</span></h2>
+      <p>Du Manifeste Agile aux méthodes modernes. Tout ce qu'un CDA doit savoir pour travailler en équipe agile et livrer de la valeur.</p>
+      <div class="hero-stats">
+        <div class="stat"><span class="stat-num">12</span><span class="stat-label">Principes Agiles</span></div>
+        <div class="stat"><span class="stat-num">4</span><span class="stat-label">Valeurs fondamentales</span></div>
+        <div class="stat"><span class="stat-num">5+</span><span class="stat-label">Méthodologies</span></div>
+        <div class="stat"><span class="stat-num">2001</span><span class="stat-label">Année du manifeste</span></div>
+      </div>
+    </div>
+
+    <!-- CONTENT -->
+    <div class="content">
+
+      <!-- ===================== SECTION 1 ===================== -->
+      <section id="intro" class="section">
+        <div class="section-header">
+          <span class="section-num">01</span>
+          <div>
+            <h3 class="section-title">Qu'est-ce que l'Agilité ?</h3>
+            <p class="section-subtitle">Fondements et philosophie</p>
+          </div>
+        </div>
+
+        <div class="highlight-card">
+          <h4>Définition</h4>
+          <p>L'agilité est une <strong style="color:var(--text)">approche de gestion de projet et de développement logiciel</strong> qui favorise la flexibilité, la collaboration et la livraison continue de valeur. Elle repose sur des cycles courts d'amélioration et une adaptation constante aux changements.</p>
+        </div>
+
+        <div class="grid-2" style="margin-bottom:1rem">
+          <div class="card card-teal">
+            <h4>Approche itérative</h4>
+            <p>Le travail est découpé en petites itérations (sprints) permettant de livrer régulièrement des fonctionnalités opérationnelles et d'ajuster le cap en fonction des retours.</p>
+          </div>
+          <div class="card card-blue">
+            <h4>Approche incrémentale</h4>
+            <p>Chaque itération ajoute de nouvelles fonctionnalités au produit existant. Le produit grossit et s'améliore progressivement à chaque cycle.</p>
+          </div>
+        </div>
+
+        <div class="divider"></div>
+
+        <h4 style="font-family:Syne;font-weight:700;color:var(--text);margin-bottom:1rem">Pourquoi l'Agilité ?</h4>
+        <div class="vs-table">
+          <div class="vs-col">
+            <div class="vs-col-header waterfall">❌ Modèle Cascade (Waterfall)</div>
+            <div class="vs-item">Phases séquentielles rigides</div>
+            <div class="vs-item">Changements coûteux et difficiles</div>
+            <div class="vs-item">Livraison unique en fin de projet</div>
+            <div class="vs-item">Client impliqué uniquement au début</div>
+            <div class="vs-item">Risques découverts tardivement</div>
+            <div class="vs-item">Documentation exhaustive en amont</div>
+          </div>
+          <div class="vs-col">
+            <div class="vs-col-header agile">✅ Méthodes Agiles</div>
+            <div class="vs-item">Cycles courts et flexibles</div>
+            <div class="vs-item">Adaptation continue aux besoins</div>
+            <div class="vs-item">Livraisons fréquentes de valeur</div>
+            <div class="vs-item">Client partenaire tout au long</div>
+            <div class="vs-item">Détection précoce des problèmes</div>
+            <div class="vs-item">Documentation juste suffisante</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===================== SECTION 2 ===================== -->
+      <section id="historique" class="section">
+        <div class="section-header">
+          <span class="section-num">02</span>
+          <div>
+            <h3 class="section-title">Historique de l'Agilité</h3>
+            <p class="section-subtitle">Des origines au mouvement moderne</p>
+          </div>
+        </div>
+
+        <div class="timeline">
+          <div class="timeline-item">
+            <div class="timeline-dot"></div>
+            <div class="timeline-year">Années 1970–80</div>
+            <div class="timeline-title">Limites du Waterfall</div>
+            <div class="timeline-desc">Le modèle en cascade (Winston Royce, 1970) montre ses limites sur les projets complexes. Retards, dépassements de budget et logiciels ne correspondant pas aux besoins réels.</div>
+          </div>
+          <div class="timeline-item">
+            <div class="timeline-dot"></div>
+            <div class="timeline-year">1986</div>
+            <div class="timeline-title">Scrum conceptualisé</div>
+            <div class="timeline-desc">Takeuchi et Nonaka publient "The New New Product Development Game" dans Harvard Business Review, introduisant le concept d'équipes auto-organisées et de sprints.</div>
+          </div>
+          <div class="timeline-item">
+            <div class="timeline-dot"></div>
+            <div class="timeline-year">1995</div>
+            <div class="timeline-title">Premier framework Scrum formalisé</div>
+            <div class="timeline-desc">Ken Schwaber et Jeff Sutherland présentent officiellement Scrum à OOPSLA (Object-Oriented Programming, Systems, Languages & Applications).</div>
+          </div>
+          <div class="timeline-item">
+            <div class="timeline-dot"></div>
+            <div class="timeline-year">1999</div>
+            <div class="timeline-title">Extreme Programming (XP)</div>
+            <div class="timeline-desc">Kent Beck publie "Extreme Programming Explained", popularisant les pratiques comme TDD, le pair programming et l'intégration continue.</div>
+          </div>
+          <div class="timeline-item">
+            <div class="timeline-dot"></div>
+            <div class="timeline-year">2001</div>
+            <div class="timeline-title">Manifeste pour le Développement Agile de Logiciels</div>
+            <div class="timeline-desc">17 experts se réunissent à Snowbird, Utah. Ils rédigent le Manifeste Agile, texte fondateur qui définit les 4 valeurs et 12 principes de l'agilité.</div>
+          </div>
+          <div class="timeline-item">
+            <div class="timeline-dot"></div>
+            <div class="timeline-year">2011</div>
+            <div class="timeline-title">SAFe — Scaled Agile Framework</div>
+            <div class="timeline-desc">Dean Leffingwell crée SAFe pour étendre l'Agilité aux grandes organisations. Répond au besoin d'aligner plusieurs équipes agiles sur des objectifs communs.</div>
+          </div>
+          <div class="timeline-item">
+            <div class="timeline-dot"></div>
+            <div class="timeline-year">Aujourd'hui</div>
+            <div class="timeline-title">Agilité généralisée</div>
+            <div class="timeline-desc">Plus de 70 % des entreprises IT utilisent des méthodes agiles. L'Agilité s'étend au-delà du développement logiciel : RH, marketing, finance…</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===================== SECTION 3 ===================== -->
+      <section id="manifeste" class="section">
+        <div class="section-header">
+          <span class="section-num">03</span>
+          <div>
+            <h3 class="section-title">Le Manifeste Agile</h3>
+            <p class="section-subtitle">4 valeurs fondamentales — Snowbird, Utah, 2001</p>
+          </div>
+        </div>
+
+        <div class="quote">
+          "Nous découvrons de meilleures façons de développer des logiciels en le faisant et en aidant les autres à le faire. Ces expériences nous ont amenés à valoriser..."
+          <cite>— Manifeste pour le Développement Agile de Logiciels, 2001</cite>
+        </div>
+
+        <div class="manifesto-grid" style="margin-bottom:1.5rem">
+          <div class="manifesto-item">
+            <div class="val">Les individus et leurs interactions</div>
+            <div class="arrow">↑ plus que</div>
+            <div class="over">les processus et les outils</div>
+          </div>
+          <div class="manifesto-item">
+            <div class="val">Des logiciels opérationnels</div>
+            <div class="arrow">↑ plus que</div>
+            <div class="over">une documentation exhaustive</div>
+          </div>
+          <div class="manifesto-item">
+            <div class="val">La collaboration avec les clients</div>
+            <div class="arrow">↑ plus que</div>
+            <div class="over">la négociation contractuelle</div>
+          </div>
+          <div class="manifesto-item">
+            <div class="val">L'adaptation au changement</div>
+            <div class="arrow">↑ plus que</div>
+            <div class="over">le suivi d'un plan</div>
+          </div>
+        </div>
+
+        <div class="card">
+          <h4>⚠️ Important à comprendre</h4>
+          <p>Le manifeste ne dit PAS que les éléments à droite sont sans valeur. Il dit que les éléments à <strong style="color:var(--text)">gauche sont davantage valorisés</strong>. Les processus, la documentation, les contrats et la planification conservent leur utilité, mais ne priment pas sur les valeurs de gauche.</p>
+        </div>
+
+        <div class="divider"></div>
+
+        <h4 style="font-family:Syne;font-weight:700;color:var(--text);margin-bottom:1rem">Les 17 signataires</h4>
+        <p style="font-size:14px;color:var(--text2);margin-bottom:0.5rem">Kent Beck, Mike Beedle, Arie van Bennekum, Alistair Cockburn, Ward Cunningham, Martin Fowler, James Grenning, Jim Highsmith, Andrew Hunt, Ron Jeffries, Jon Kern, Brian Marick, Robert C. Martin, Steve Mellor, Ken Schwaber, Jeff Sutherland, Dave Thomas.</p>
+        <div class="badge badge-blue">Créateurs de Scrum, XP, Crystal, DSDM, FDD, Pragma Programming…</div>
+      </section>
+
+      <!-- ===================== SECTION 4 ===================== -->
+      <section id="principes" class="section">
+        <div class="section-header">
+          <span class="section-num">04</span>
+          <div>
+            <h3 class="section-title">Les 12 Principes Agiles</h3>
+            <p class="section-subtitle">Le socle philosophique de toutes les méthodes agiles</p>
+          </div>
+        </div>
+
+        <div class="principle"><div class="principle-num">01</div><p>Notre plus haute priorité est de <strong style="color:var(--teal)">satisfaire le client</strong> en livrant rapidement et régulièrement des fonctionnalités à grande valeur ajoutée.</p></div>
+        <div class="principle"><div class="principle-num">02</div><p><strong style="color:var(--teal)">Accueillez positivement les changements de besoins</strong>, même tard dans le projet. Les processus agiles exploitent le changement pour donner un avantage compétitif au client.</p></div>
+        <div class="principle"><div class="principle-num">03</div><p><strong style="color:var(--teal)">Livrez fréquemment</strong> un logiciel opérationnel avec des cycles de quelques semaines à quelques mois et une préférence pour les plus courts.</p></div>
+        <div class="principle"><div class="principle-num">04</div><p>Les <strong style="color:var(--teal)">utilisateurs ou leurs représentants et les développeurs</strong> doivent travailler ensemble quotidiennement tout au long du projet.</p></div>
+        <div class="principle"><div class="principle-num">05</div><p>Réalisez les projets avec des <strong style="color:var(--teal)">personnes motivées</strong>. Donnez-leur l'environnement et le soutien dont ils ont besoin et faites-leur confiance.</p></div>
+        <div class="principle"><div class="principle-num">06</div><p>La méthode la plus simple et la plus efficace pour transmettre de l'information est le <strong style="color:var(--teal)">dialogue en face à face</strong>.</p></div>
+        <div class="principle"><div class="principle-num">07</div><p>Un <strong style="color:var(--teal)">logiciel opérationnel est la principale mesure d'avancement</strong>.</p></div>
+        <div class="principle"><div class="principle-num">08</div><p>Les processus agiles promeuvent un <strong style="color:var(--teal)">rythme soutenable</strong> en développement. Les commanditaires, les développeurs et les utilisateurs devraient pouvoir maintenir indéfiniment un rythme constant.</p></div>
+        <div class="principle"><div class="principle-num">09</div><p>Une attention continue à <strong style="color:var(--teal)">l'excellence technique</strong> et à une bonne conception renforce l'agilité.</p></div>
+        <div class="principle"><div class="principle-num">10</div><p>La <strong style="color:var(--teal)">simplicité</strong> — l'art de minimiser la quantité de travail inutile — est essentielle.</p></div>
+        <div class="principle"><div class="principle-num">11</div><p>Les meilleures architectures, spécifications et conceptions émergent d'<strong style="color:var(--teal)">équipes auto-organisées</strong>.</p></div>
+        <div class="principle"><div class="principle-num">12</div><p>À intervalles réguliers, l'équipe <strong style="color:var(--teal)">réfléchit aux moyens de devenir plus efficace</strong>, puis règle et modifie son comportement en conséquence.</p></div>
+      </section>
+
+      <!-- ===================== SECTION 5 : SCRUM ===================== -->
+      <section id="scrum" class="section">
+        <div class="section-header">
+          <span class="section-num">05</span>
+          <div>
+            <h3 class="section-title">Scrum</h3>
+            <p class="section-subtitle">Le framework agile le plus utilisé au monde</p>
+          </div>
+        </div>
+
+        <div class="highlight-card">
+          <h4>Qu'est-ce que Scrum ?</h4>
+          <p>Scrum est un framework léger qui aide les équipes à générer de la valeur à travers des solutions adaptatives pour des problèmes complexes. Il est défini par le <strong style="color:var(--text)">Scrum Guide</strong> (Schwaber & Sutherland, dernière version 2020).</p>
+        </div>
+
+        <h4 style="font-family:Syne;font-weight:700;color:var(--text);margin-bottom:1rem">Les 3 piliers de Scrum (TIA)</h4>
+        <div class="grid-3" style="margin-bottom:1.5rem">
+          <div class="icon-card">
+            <div class="icon" style="background:rgba(79,142,247,0.1)">🔍</div>
+            <h4>Transparence</h4>
+            <p>Le travail et les processus doivent être visibles de tous. Artefacts et progrès partagés ouvertement.</p>
+          </div>
+          <div class="icon-card">
+            <div class="icon" style="background:rgba(15,216,176,0.1)">🔎</div>
+            <h4>Inspection</h4>
+            <p>Évaluation régulière des artefacts et de la progression vers les objectifs lors des 5 événements.</p>
+          </div>
+          <div class="icon-card">
+            <div class="icon" style="background:rgba(245,158,11,0.1)">⚙️</div>
+            <h4>Adaptation</h4>
+            <p>Ajustement rapide du processus ou du produit si déviation hors des limites acceptables.</p>
+          </div>
+        </div>
+
+        <h4 style="font-family:Syne;font-weight:700;color:var(--text);margin-bottom:1rem">Les 5 valeurs Scrum</h4>
+        <div class="grid-3" style="margin-bottom:1.5rem">
+          <div class="card card-blue"><h4>🎯 Engagement</h4><p>L'équipe s'engage sur les objectifs du Sprint et sur la qualité.</p></div>
+          <div class="card card-teal"><h4>🔥 Focus</h4><p>Concentration sur le travail du Sprint et les objectifs de l'équipe.</p></div>
+          <div class="card card-amber"><h4>🤝 Ouverture</h4><p>Transparence sur le travail et les défis rencontrés.</p></div>
+          <div class="card card-coral"><h4>💪 Respect</h4><p>Respect mutuel entre membres, compétences et opinions.</p></div>
+          <div class="card card-purple"><h4>⚡ Courage</h4><p>Courage de faire les bons choix et de travailler sur les problèmes difficiles.</p></div>
+        </div>
+
+        <div class="divider"></div>
+
+        <h4 style="font-family:Syne;font-weight:700;color:var(--text);margin-bottom:1rem">Les 3 Rôles Scrum</h4>
+        <div class="grid-3" style="margin-bottom:1.5rem">
+          <div class="role-card">
+            <div class="role-avatar" style="background:rgba(79,142,247,0.12)">👑</div>
+            <h4>Product Owner</h4>
+            <p>Responsable de la valeur du produit. Gère et priorise le Product Backlog. Représente les parties prenantes.</p>
+            <div style="margin-top:0.75rem"><span class="badge badge-blue">PO</span></div>
+          </div>
+          <div class="role-card">
+            <div class="role-avatar" style="background:rgba(15,216,176,0.12)">🛡️</div>
+            <h4>Scrum Master</h4>
+            <p>Garant du processus Scrum. Servant-leader de l'équipe, supprime les obstacles et facilite les cérémonies.</p>
+            <div style="margin-top:0.75rem"><span class="badge badge-teal">SM</span></div>
+          </div>
+          <div class="role-card">
+            <div class="role-avatar" style="background:rgba(232,121,249,0.12)">💻</div>
+            <h4>Developers</h4>
+            <p>Équipe pluridisciplinaire auto-organisée (3 à 9 personnes) chargée de créer l'Incrément à chaque Sprint.</p>
+            <div style="margin-top:0.75rem"><span class="badge badge-purple">DEV</span></div>
+          </div>
+        </div>
+
+        <div class="divider"></div>
+
+        <h4 style="font-family:Syne;font-weight:700;color:var(--text);margin-bottom:1rem">Les 5 Événements Scrum</h4>
+
+        <div class="ceremony">
+          <div class="ceremony-icon" style="background:rgba(79,142,247,0.1)">🗓️</div>
+          <div class="ceremony-info">
+            <h4>Sprint</h4>
+            <p>Conteneur de tous les événements. Cycle de développement de durée fixe. Commence immédiatement après la fin du précédent.</p>
+          </div>
+          <div class="ceremony-meta"><div class="duration">1–4 semaines</div><div class="freq">Continu</div></div>
+        </div>
+
+        <div class="ceremony">
+          <div class="ceremony-icon" style="background:rgba(15,216,176,0.1)">📋</div>
+          <div class="ceremony-info">
+            <h4>Sprint Planning</h4>
+            <p>L'équipe définit l'objectif du Sprint (Sprint Goal) et sélectionne les items du Product Backlog à réaliser. Création du Sprint Backlog.</p>
+          </div>
+          <div class="ceremony-meta"><div class="duration">Max 8h</div><div class="freq">Début de sprint</div></div>
+        </div>
+
+        <div class="ceremony">
+          <div class="ceremony-icon" style="background:rgba(245,158,11,0.1)">☀️</div>
+          <div class="ceremony-info">
+            <h4>Daily Scrum</h4>
+            <p>Réunion quotidienne de 15 min pour inspecter la progression vers le Sprint Goal et adapter le plan. Tenue en stand-up.</p>
+          </div>
+          <div class="ceremony-meta"><div class="duration">15 min</div><div class="freq">Chaque jour</div></div>
+        </div>
+
+        <div class="ceremony">
+          <div class="ceremony-icon" style="background:rgba(34,197,94,0.1)">📊</div>
+          <div class="ceremony-info">
+            <h4>Sprint Review</h4>
+            <p>Inspection de l'Incrément avec les parties prenantes. Le PO présente le travail accompli et recueille les feedbacks. Adaptation du Product Backlog.</p>
+          </div>
+          <div class="ceremony-meta"><div class="duration">Max 4h</div><div class="freq">Fin de sprint</div></div>
+        </div>
+
+        <div class="ceremony">
+          <div class="ceremony-icon" style="background:rgba(232,121,249,0.1)">🔄</div>
+          <div class="ceremony-info">
+            <h4>Sprint Retrospective</h4>
+            <p>L'équipe inspecte son fonctionnement et planifie des améliorations. Porte sur les personnes, relations, processus et outils. Plan d'amélioration actionnable.</p>
+          </div>
+          <div class="ceremony-meta"><div class="duration">Max 3h</div><div class="freq">Fin de sprint</div></div>
+        </div>
+
+        <div class="divider"></div>
+
+        <h4 style="font-family:Syne;font-weight:700;color:var(--text);margin-bottom:1rem">Les 3 Artefacts Scrum</h4>
+        <div class="grid-3" style="margin-bottom:1rem">
+          <div class="card card-blue">
+            <h4>Product Backlog</h4>
+            <p>Liste ordonnée et émergente de tout ce qui est nécessaire pour améliorer le produit. Engagement : <span class="badge badge-blue">Product Goal</span></p>
+          </div>
+          <div class="card card-teal">
+            <h4>Sprint Backlog</h4>
+            <p>Items du Product Backlog sélectionnés + plan du Sprint + Sprint Goal. Engagement : <span class="badge badge-teal">Sprint Goal</span></p>
+          </div>
+          <div class="card card-green">
+            <h4>Incrément</h4>
+            <p>Somme de tout le travail complété qui répond à la Definition of Done. Engagement : <span class="badge badge-green">DoD</span></p>
+          </div>
+        </div>
+
+        <div class="card card-amber">
+          <h4>📌 Definition of Done (DoD)</h4>
+          <p>Engagement formel de l'équipe décrivant l'état de l'Incrément quand il répond aux mesures de qualité requises. Exemple : code revu, tests unitaires écrits et passés, déployé en staging, documentation mise à jour.</p>
+        </div>
+
+        <div class="divider"></div>
+
+        <h4 style="font-family:Syne;font-weight:700;color:var(--text);margin-bottom:1rem">Exemple de Scrum Board</h4>
+        <div class="scrum-board">
+          <div class="scrum-col col-todo">
+            <div class="scrum-col-title">À faire</div>
+            <div class="task-card">🔐 Authentification OAuth</div>
+            <div class="task-card">📱 Page profil mobile</div>
+            <div class="task-card">🔔 Notifications push</div>
+          </div>
+          <div class="scrum-col col-prog">
+            <div class="scrum-col-title">En cours</div>
+            <div class="task-card">🛒 Panier d'achat</div>
+            <div class="task-card">🔍 Recherche full-text</div>
+          </div>
+          <div class="scrum-col col-test">
+            <div class="scrum-col-title">À tester</div>
+            <div class="task-card">📦 API produits</div>
+          </div>
+          <div class="scrum-col col-done">
+            <div class="scrum-col-title">Terminé</div>
+            <div class="task-card">✅ Page d'accueil</div>
+            <div class="task-card">✅ Inscription utilisateur</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===================== SECTION 6 : KANBAN ===================== -->
+      <section id="kanban" class="section">
+        <div class="section-header">
+          <span class="section-num">06</span>
+          <div>
+            <h3 class="section-title">Kanban</h3>
+            <p class="section-subtitle">Visualiser le flux, limiter le travail en cours, optimiser la livraison</p>
+          </div>
+        </div>
+
+        <div class="highlight-card">
+          <h4>Origine</h4>
+          <p>Kanban vient du japonais « 看板 » (étiquette visuelle). Inventé par Toyota dans les années 1940 pour les chaînes de production, adapté au développement logiciel par David Anderson vers 2007.</p>
+        </div>
+
+        <h4 style="font-family:Syne;font-weight:700;color:var(--text);margin-bottom:1rem">Les 6 Pratiques Kanban</h4>
+        <div class="grid-2" style="margin-bottom:1.5rem">
+          <div class="card card-teal"><h4>1. Visualiser le flux</h4><p>Représenter visuellement l'état de chaque tâche sur un tableau Kanban pour que l'équipe ait une visibilité complète.</p></div>
+          <div class="card card-blue"><h4>2. Limiter le WIP</h4><p>Work In Progress : limiter le nombre de tâches simultanées par colonne pour éviter le multitâche et détecter les goulots d'étranglement.</p></div>
+          <div class="card card-amber"><h4>3. Gérer le flux</h4><p>Observer, mesurer et optimiser la fluidité du passage des tâches d'une étape à l'autre.</p></div>
+          <div class="card card-green"><h4>4. Expliciter les politiques</h4><p>Définir clairement les règles : critères d'entrée/sortie de chaque colonne, DoD, priorités.</p></div>
+          <div class="card card-coral"><h4>5. Feedback loops</h4><p>Mettre en place des boucles de retour régulières : réunions Kanban (stand-up, review, retrospective).</p></div>
+          <div class="card card-purple"><h4>6. Amélioration continue</h4><p>Kaizen : améliorer collaborativement, expérimenter en continu, évoluer le système de façon itérative.</p></div>
+        </div>
+
+        <h4 style="font-family:Syne;font-weight:700;color:var(--text);margin-bottom:0.75rem">Flux de travail typique</h4>
+        <div class="kanban-flow">
+          <div class="kanban-step">📥 Backlog</div>
+          <span class="kanban-arrow">→</span>
+          <div class="kanban-step">📌 Analyse</div>
+          <span class="kanban-arrow">→</span>
+          <div class="kanban-step">⚙️ Dev</div>
+          <span class="kanban-arrow">→</span>
+          <div class="kanban-step">🧪 Tests</div>
+          <span class="kanban-arrow">→</span>
+          <div class="kanban-step">✅ Review</div>
+          <span class="kanban-arrow">→</span>
+          <div class="kanban-step">🚀 Déployé</div>
+        </div>
+
+        <div class="divider"></div>
+
+        <h4 style="font-family:Syne;font-weight:700;color:var(--text);margin-bottom:1rem">Métriques Kanban</h4>
+        <div class="table-wrapper">
+          <table>
+            <thead>
+              <tr><th>Métrique</th><th>Définition</th><th>Utilité</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>Lead Time</td><td>Temps entre création de la tâche et sa livraison</td><td>Mesure la durée de bout en bout</td></tr>
+              <tr><td>Cycle Time</td><td>Temps entre début et fin de traitement</td><td>Mesure l'efficacité du processus</td></tr>
+              <tr><td>Throughput</td><td>Nombre de tâches terminées par période</td><td>Capacité de livraison de l'équipe</td></tr>
+              <tr><td>WIP</td><td>Nombre de tâches en cours simultanément</td><td>Indicateur de surcharge</td></tr>
+              <tr><td>Cumulative Flow Diagram</td><td>Évolution des tâches par colonne dans le temps</td><td>Visualiser les blocages et goulots</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="card card-teal">
+          <h4>🆚 Scrum vs Kanban</h4>
+          <p>Scrum impose des sprints de durée fixe et des rôles définis. Kanban est plus souple : pas de rôles imposés, pas de sprints obligatoires, le flux est continu. Scrumban combine les deux approches.</p>
+        </div>
+      </section>
+
+      <!-- ===================== SECTION 7 : XP ===================== -->
+      <section id="xp" class="section">
+        <div class="section-header">
+          <span class="section-num">07</span>
+          <div>
+            <h3 class="section-title">Extreme Programming (XP)</h3>
+            <p class="section-subtitle">Les pratiques d'ingénierie au cœur de l'agilité technique</p>
+          </div>
+        </div>
+
+        <div class="highlight-card">
+          <h4>Définition</h4>
+          <p>XP est une méthode agile créée par Kent Beck axée sur les bonnes pratiques de développement. Elle vise à améliorer la qualité logicielle et la réactivité face aux besoins changeants des clients.</p>
+        </div>
+
+        <h4 style="font-family:Syne;font-weight:700;color:var(--text);margin-bottom:1rem">Les 5 valeurs XP</h4>
+        <div class="grid-3" style="margin-bottom:1.5rem">
+          <div class="card card-teal"><h4>Communication</h4><p>Favoriser les échanges directs entre développeurs, clients et équipe.</p></div>
+          <div class="card card-blue"><h4>Simplicité</h4><p>Toujours implémenter la solution la plus simple qui fonctionne (YAGNI).</p></div>
+          <div class="card card-amber"><h4>Feedback</h4><p>Retours rapides et fréquents via tests, revues de code, démos client.</p></div>
+          <div class="card card-coral"><h4>Courage</h4><p>Oser refactoriser, dire non, remettre en question les solutions existantes.</p></div>
+          <div class="card card-purple"><h4>Respect</h4><p>Respect mutuel entre membres de l'équipe et avec le client.</p></div>
+        </div>
+
+        <h4 style="font-family:Syne;font-weight:700;color:var(--text);margin-bottom:1rem">Pratiques XP essentielles pour le CDA</h4>
+
+        <div class="grid-2" style="margin-bottom:1rem">
+          <div class="card card-teal">
+            <h4>🧪 TDD — Test Driven Development</h4>
+            <p>Écrire les tests AVANT le code de production. Cycle : Red → Green → Refactor. Garantit une couverture de tests maximale et un design émergent.</p>
+          </div>
+          <div class="card card-blue">
+            <h4>👥 Pair Programming</h4>
+            <p>Deux développeurs travaillent sur le même poste simultanément. Un "driver" écrit le code, un "navigator" révise et réfléchit à la stratégie. Améliore la qualité et transfère le savoir.</p>
+          </div>
+          <div class="card card-amber">
+            <h4>🔄 Refactoring continu</h4>
+            <p>Amélioration continue du code sans changer son comportement externe. Réduit la dette technique et améliore la lisibilité.</p>
+          </div>
+          <div class="card card-coral">
+            <h4>🔗 Intégration Continue (CI)</h4>
+            <p>Intégrer le code fréquemment (plusieurs fois par jour). Build et tests automatisés à chaque commit. Détection précoce des conflits et régressions.</p>
+          </div>
+          <div class="card card-green">
+            <h4>📦 Livraisons fréquentes</h4>
+            <p>Déployer en production régulièrement des versions fonctionnelles. Feedback client rapide, réduction des risques liés aux grosses livraisons.</p>
+          </div>
+          <div class="card card-purple">
+            <h4>🏗️ Conception simple</h4>
+            <p>Implémenter uniquement ce qui est nécessaire maintenant. YAGNI (You Aren't Gonna Need It) et DRY (Don't Repeat Yourself).</p>
+          </div>
+        </div>
+
+        <div class="card card-blue">
+          <h4>📐 Standards de codage</h4>
+          <p>L'équipe XP adopte des conventions communes : nommage, formatage, commentaires. Tout le code appartient à l'équipe (collective ownership), pas à un individu.</p>
+        </div>
+      </section>
+
+      <!-- ===================== SECTION 8 : LEAN & SAFe ===================== -->
+      <section id="lean" class="section">
+        <div class="section-header">
+          <span class="section-num">08</span>
+          <div>
+            <h3 class="section-title">Lean & SAFe</h3>
+            <p class="section-subtitle">Lean Software Development et Agilité à grande échelle</p>
+          </div>
+        </div>
+
+        <h4 style="font-family:Syne;font-weight:700;color:var(--text);margin-bottom:1rem">Les 7 Principes Lean (Mary & Tom Poppendieck)</h4>
+        <div class="grid-2">
+          <div class="card card-teal"><h4>1. Éliminer les gaspillages</h4><p>Supprimer tout ce qui n'apporte pas de valeur au client : code non utilisé, attentes, bugs, over-processing…</p></div>
+          <div class="card card-blue"><h4>2. Amplifier l'apprentissage</h4><p>Favoriser les feedbacks rapides, les itérations courtes et le partage de connaissance.</p></div>
+          <div class="card card-amber"><h4>3. Décider le plus tard possible</h4><p>Reporter les décisions irréversibles jusqu'au dernier moment responsable pour bénéficier du maximum d'informations.</p></div>
+          <div class="card card-coral"><h4>4. Livrer le plus vite possible</h4><p>Réduire le time-to-market en optimisant le flux et en évitant les travaux non prioritaires.</p></div>
+          <div class="card card-green"><h4>5. Responsabiliser l'équipe</h4><p>Donner l'autonomie aux équipes pour prendre les décisions techniques au niveau approprié.</p></div>
+          <div class="card card-purple"><h4>6. Construire la qualité</h4><p>Intégrer la qualité dès la conception plutôt que de la vérifier en fin de cycle.</p></div>
+        </div>
+        <div class="card card-pink" style="margin-top:0.75rem"><h4>7. Voir l'ensemble</h4><p>Optimiser le système global et non les parties individuelles. Éviter l'optimisation locale au détriment du tout.</p></div>
+
+        <div class="divider"></div>
+
+        <h4 style="font-family:Syne;font-weight:700;color:var(--text);margin-bottom:1rem">SAFe — Scaled Agile Framework</h4>
+
+        <div class="highlight-card">
+          <h4>Qu'est-ce que SAFe ?</h4>
+          <p>SAFe permet d'appliquer les principes Agile/Lean au niveau de l'entreprise. Il organise plusieurs équipes Scrum/Kanban autour d'un <strong style="color:var(--text)">Agile Release Train (ART)</strong> pour aligner leur travail sur un programme commun appelé <strong style="color:var(--text)">Program Increment (PI)</strong>.</p>
+        </div>
+
+        <div class="grid-2">
+          <div class="card card-blue">
+            <h4>Programme Increment (PI)</h4>
+            <p>Cadence de planification sur 8–12 semaines. Alignement de toutes les équipes de l'ART sur des objectifs communs. PI Planning : grand événement de planification (2 jours).</p>
+          </div>
+          <div class="card card-teal">
+            <h4>Agile Release Train (ART)</h4>
+            <p>5 à 12 équipes agiles (50–125 personnes) alignées sur une même mission. Livraisons synchronisées toutes les 2 semaines (sprints identiques).</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===================== SECTION 9 : ESTIMATION ===================== -->
+      <section id="estimation" class="section">
+        <div class="section-header">
+          <span class="section-num">09</span>
+          <div>
+            <h3 class="section-title">Estimation & Vélocité</h3>
+            <p class="section-subtitle">Story points, planning poker, vélocité et burndown charts</p>
+          </div>
+        </div>
+
+        <div class="highlight-card">
+          <h4>Pourquoi estimer différemment ?</h4>
+          <p>En Agile, on n'estime pas en heures mais en <strong style="color:var(--text)">Story Points</strong> (effort relatif). Cela évite les biais de précision illusoire et permet d'intégrer la complexité, l'incertitude et l'effort.</p>
+        </div>
+
+        <h4 style="font-family:Syne;font-weight:700;color:var(--text);margin-bottom:0.75rem">Story Points</h4>
+        <p style="font-size:14px;color:var(--text2);margin-bottom:1rem">Unité de mesure relative de l'effort, de la complexité et de l'incertitude d'une User Story. Basés sur la suite de Fibonacci pour refléter l'incertitude croissante.</p>
+
+        <div class="card card-blue" style="margin-bottom:1.5rem">
+          <h4>Séquence de Fibonacci Agile</h4>
+          <div class="poker-cards">
+            <div class="poker-card">0</div>
+            <div class="poker-card">1</div>
+            <div class="poker-card">2</div>
+            <div class="poker-card">3</div>
+            <div class="poker-card">5</div>
+            <div class="poker-card">8</div>
+            <div class="poker-card">13</div>
+            <div class="poker-card">21</div>
+            <div class="poker-card">40</div>
+            <div class="poker-card">100</div>
+            <div class="poker-card">∞</div>
+            <div class="poker-card">?</div>
+          </div>
+          <p style="font-size:13px;margin-top:0.75rem">Les cartes spéciales ∞ (trop grande, à découper) et ? (pas assez d'information) permettent de signaler un problème dans l'estimation.</p>
+        </div>
+
+        <h4 style="font-family:Syne;font-weight:700;color:var(--text);margin-bottom:0.75rem">Planning Poker</h4>
+        <div class="card card-teal" style="margin-bottom:1.5rem">
+          <h4>Déroulement</h4>
+          <ul class="styled-list">
+            <li>Le PO lit une User Story à l'équipe</li>
+            <li>Les développeurs posent des questions pour clarifier</li>
+            <li>Chacun choisit une carte en secret (éviter l'influence)</li>
+            <li>Tout le monde révèle simultanément</li>
+            <li>Discussion si écart important (plus grand = plus petit)</li>
+            <li>Nouveau vote jusqu'au consensus</li>
+          </ul>
+        </div>
+
+        <h4 style="font-family:Syne;font-weight:700;color:var(--text);margin-bottom:0.75rem">Vélocité</h4>
+        <p style="font-size:14px;color:var(--text2);margin-bottom:0.75rem">Nombre de Story Points réellement terminés lors d'un sprint. Permet de prévoir la capacité pour les prochains sprints.</p>
+
+        <div style="background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:1.25rem;margin-bottom:1.5rem">
+          <div style="font-size:12px;color:var(--text3);margin-bottom:0.75rem;font-weight:600;letter-spacing:0.06em;text-transform:uppercase">Vélocité par sprint</div>
+          <div class="chart-bars">
+            <div class="bar-wrap"><div class="bar-val">28</div><div class="bar" style="height:56%"></div><div class="bar-label">S1</div></div>
+            <div class="bar-wrap"><div class="bar-val">32</div><div class="bar" style="height:64%"></div><div class="bar-label">S2</div></div>
+            <div class="bar-wrap"><div class="bar-val">35</div><div class="bar" style="height:70%"></div><div class="bar-label">S3</div></div>
+            <div class="bar-wrap"><div class="bar-val">38</div><div class="bar" style="height:76%"></div><div class="bar-label">S4</div></div>
+            <div class="bar-wrap"><div class="bar-val">36</div><div class="bar" style="height:72%"></div><div class="bar-label">S5</div></div>
+            <div class="bar-wrap"><div class="bar-val">40</div><div class="bar" style="height:80%"></div><div class="bar-label">S6</div></div>
+            <div class="bar-wrap"><div class="bar-val">42</div><div class="bar" style="height:84%;background:linear-gradient(180deg,var(--teal),rgba(15,216,176,0.4))"></div><div class="bar-label">S7</div></div>
+          </div>
+          <p style="font-size:12px;color:var(--text3)">Vélocité moyenne : ~36 SP/sprint — L'équipe monte en régime puis se stabilise.</p>
+        </div>
+
+        <div class="grid-2">
+          <div class="card card-blue">
+            <h4>📉 Burndown Chart</h4>
+            <p>Graphique montrant la quantité de travail restante vs le temps. Permet de voir si l'équipe est en bonne voie pour terminer le sprint.</p>
+          </div>
+          <div class="card card-teal">
+            <h4>📈 Burnup Chart</h4>
+            <p>Montre le travail accompli et le travail total. Meilleur que le burndown pour visualiser les changements de périmètre en cours de sprint.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===================== SECTION 10 : BACKLOG & USER STORIES ===================== -->
+      <section id="backlog" class="section">
+        <div class="section-header">
+          <span class="section-num">10</span>
+          <div>
+            <h3 class="section-title">Backlog & User Stories</h3>
+            <p class="section-subtitle">Capturer, prioriser et affiner les besoins</p>
+          </div>
+        </div>
+
+        <h4 style="font-family:Syne;font-weight:700;color:var(--text);margin-bottom:1rem">User Story — Format standard</h4>
+        <div class="highlight-card">
+          <h4>Template</h4>
+          <p style="font-size:18px;color:var(--text);font-family:Syne;font-weight:600;margin-bottom:0.5rem">
+            En tant que <span style="color:var(--teal)">[rôle utilisateur]</span>,<br>
+            Je veux <span style="color:var(--accent)">[fonctionnalité]</span>,<br>
+            Afin de <span style="color:var(--amber)">[bénéfice / valeur métier]</span>.
+          </p>
+        </div>
+
+        <div class="card card-teal" style="margin-bottom:1rem">
+          <h4>Exemple</h4>
+          <p><em>En tant qu'</em><strong style="color:var(--teal)">acheteur connecté</strong>,<br>
+          <em>Je veux</em> <strong style="color:var(--accent)">sauvegarder des articles dans ma liste de souhaits</strong>,<br>
+          <em>Afin de</em> <strong style="color:var(--amber)">les retrouver facilement pour un achat ultérieur</strong>.</p>
+        </div>
+
+        <h4 style="font-family:Syne;font-weight:700;color:var(--text);margin-bottom:0.75rem">INVEST — Critères d'une bonne User Story</h4>
+        <div class="grid-3" style="margin-bottom:1.5rem">
+          <div class="icon-card"><div class="icon" style="background:rgba(79,142,247,0.1)">🔵</div><h4>I — Indépendante</h4><p>Pas de dépendance forte avec d'autres stories. Peut être développée seule.</p></div>
+          <div class="icon-card"><div class="icon" style="background:rgba(15,216,176,0.1)">💬</div><h4>N — Négociable</h4><p>Pas un contrat figé. Les détails se discutent entre PO et équipe.</p></div>
+          <div class="icon-card"><div class="icon" style="background:rgba(245,158,11,0.1)">💎</div><h4>V — Valuable</h4><p>Apporte une valeur claire et mesurable pour l'utilisateur ou le client.</p></div>
+          <div class="icon-card"><div class="icon" style="background:rgba(34,197,94,0.1)">📏</div><h4>E — Estimable</h4><p>L'équipe peut estimer son effort. Sinon, besoin de plus d'informations.</p></div>
+          <div class="icon-card"><div class="icon" style="background:rgba(255,107,107,0.1)">📦</div><h4>S — Small</h4><p>Réalisable en moins d'un sprint (si plus grande = Epic à découper).</p></div>
+          <div class="icon-card"><div class="icon" style="background:rgba(232,121,249,0.1)">✅</div><h4>T — Testable</h4><p>Les critères d'acceptation permettent de vérifier objectivement la réalisation.</p></div>
+        </div>
+
+        <h4 style="font-family:Syne;font-weight:700;color:var(--text);margin-bottom:0.75rem">Hiérarchie du Backlog</h4>
+        <div class="table-wrapper" style="margin-bottom:1.5rem">
+          <table>
+            <thead><tr><th>Niveau</th><th>Granularité</th><th>Horizon</th><th>Exemple</th></tr></thead>
+            <tbody>
+              <tr><td>Epic</td><td>Très grosse fonctionnalité</td><td>Plusieurs sprints / trimestre</td><td>Module de paiement</td></tr>
+              <tr><td>Feature</td><td>Fonctionnalité</td><td>1-3 sprints</td><td>Paiement par carte bancaire</td></tr>
+              <tr><td>User Story</td><td>Besoin utilisateur</td><td>1 sprint</td><td>Saisir les informations CB</td></tr>
+              <tr><td>Task</td><td>Tâche technique</td><td>Quelques heures</td><td>Créer le composant formulaire</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <h4 style="font-family:Syne;font-weight:700;color:var(--text);margin-bottom:0.75rem">Critères d'Acceptation</h4>
+        <div class="card card-amber">
+          <h4>Format Gherkin (BDD)</h4>
+          <pre style="background:var(--bg);border-radius:8px;padding:1rem;font-size:13px;color:var(--teal);overflow:auto;margin-top:0.5rem;font-family:monospace"><code><span style="color:var(--text3)">Scénario :</span> Ajout d'un article à la liste de souhaits
+<span style="color:var(--accent)">Étant donné</span> que je suis connecté en tant qu'acheteur
+<span style="color:var(--accent)">Et</span> que je visualise une fiche produit
+<span style="color:var(--accent)">Quand</span> je clique sur "Ajouter aux souhaits"
+<span style="color:var(--teal)">Alors</span> le produit apparaît dans ma liste de souhaits
+<span style="color:var(--teal)">Et</span> un message de confirmation s'affiche</code></pre>
+        </div>
+
+        <div class="divider"></div>
+
+        <h4 style="font-family:Syne;font-weight:700;color:var(--text);margin-bottom:1rem">Techniques de priorisation du Backlog</h4>
+        <div class="grid-2">
+          <div class="card card-blue">
+            <h4>Matrice MoSCoW</h4>
+            <p><strong style="color:var(--text)">M</strong>ust Have · <strong style="color:var(--text)">S</strong>hould Have · <strong style="color:var(--text)">C</strong>ould Have · <strong style="color:var(--text)">W</strong>on't Have. Classe les fonctionnalités par niveau d'obligation.</p>
+          </div>
+          <div class="card card-teal">
+            <h4>Valeur vs Effort</h4>
+            <p>Matrice 2x2 positionnant chaque story sur sa valeur métier et son effort. Prioriser les items haute valeur / faible effort.</p>
+          </div>
+          <div class="card card-amber">
+            <h4>WSJF (SAFe)</h4>
+            <p>Weighted Shortest Job First : prioriser par coût du délai divisé par la durée. Maximise le flux de valeur économique.</p>
+          </div>
+          <div class="card card-coral">
+            <h4>Kano Model</h4>
+            <p>Classe les fonctionnalités en Must-be, Performance et Attractive selon leur impact sur la satisfaction client.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===================== SECTION 11 : CEREMONIES ===================== -->
+      <section id="ceremonies" class="section">
+        <div class="section-header">
+          <span class="section-num">11</span>
+          <div>
+            <h3 class="section-title">Cérémonies Agiles</h3>
+            <p class="section-subtitle">Rituels de synchronisation, de planification et d'amélioration</p>
+          </div>
+        </div>
+
+        <div class="table-wrapper">
+          <table>
+            <thead><tr><th>Cérémonie</th><th>Qui</th><th>Durée max</th><th>Fréquence</th><th>Objectif</th></tr></thead>
+            <tbody>
+              <tr><td>Sprint Planning</td><td>Toute l'équipe</td><td>8h (sprint 4 sem.)</td><td>Début sprint</td><td>Planifier le sprint</td></tr>
+              <tr><td>Daily Scrum</td><td>Developers (+ SM)</td><td>15 min</td><td>Chaque jour</td><td>Synchronisation</td></tr>
+              <tr><td>Backlog Refinement</td><td>PO + Dev</td><td>10% du sprint</td><td>En cours de sprint</td><td>Affiner les stories</td></tr>
+              <tr><td>Sprint Review</td><td>Équipe + parties prenantes</td><td>4h</td><td>Fin sprint</td><td>Présenter l'incrément</td></tr>
+              <tr><td>Sprint Retrospective</td><td>Équipe Scrum</td><td>3h</td><td>Fin sprint</td><td>Améliorer le process</td></tr>
+              <tr><td>PI Planning (SAFe)</td><td>Toutes les équipes ART</td><td>2 jours</td><td>Tous les 2-3 mois</td><td>Aligner les équipes</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="card card-blue" style="margin-bottom:1rem">
+          <h4>📌 Backlog Refinement (Grooming)</h4>
+          <p>Séance continue (non un événement officiel Scrum) où le PO et l'équipe clarifient, estiment et découpent les User Stories à venir. Objectif : que les prochains items du Product Backlog soient "Ready" pour être pris en sprint.</p>
+        </div>
+
+        <div class="card card-teal">
+          <h4>✅ Definition of Ready (DoR)</h4>
+          <p>Checklist définissant quand une User Story est prête à être développée : critères d'acceptation définis, story estimée, dépendances identifiées, maquettes disponibles si nécessaire.</p>
+        </div>
+      </section>
+
+      <!-- ===================== SECTION 12 : METRIQUES ===================== -->
+      <section id="metrics" class="section">
+        <div class="section-header">
+          <span class="section-num">12</span>
+          <div>
+            <h3 class="section-title">Métriques Agiles</h3>
+            <p class="section-subtitle">Mesurer la performance et la santé d'une équipe agile</p>
+          </div>
+        </div>
+
+        <div class="grid-2" style="margin-bottom:1.5rem">
+          <div class="card card-blue">
+            <h4>📉 Burndown Chart de Sprint</h4>
+            <p>Visualise le travail restant en Story Points vs le temps restant dans le sprint. La ligne idéale est linéaire. Toute déviation révèle un problème.</p>
+          </div>
+          <div class="card card-teal">
+            <h4>📈 Burnup Chart de Release</h4>
+            <p>Montre le travail accompli et le scope total. Plus adapté pour les releases longues car il rend visible les ajouts au périmètre.</p>
+          </div>
+          <div class="card card-amber">
+            <h4>⚡ Vélocité</h4>
+            <p>Points terminés par sprint. Outil de prévision (capacité future) et non de performance. Ne pas comparer entre équipes.</p>
+          </div>
+          <div class="card card-coral">
+            <h4>🔄 Cycle Time & Lead Time</h4>
+            <p>Cycle time : délai de développement. Lead time : délai client total. Optimiser ces métriques améliore la réactivité.</p>
+          </div>
+        </div>
+
+        <div class="table-wrapper">
+          <table>
+            <thead><tr><th>Métrique</th><th>Ce qu'elle mesure</th><th>Outil</th></tr></thead>
+            <tbody>
+              <tr><td>Vélocité</td><td>SP terminés / sprint</td><td>Jira, Azure DevOps</td></tr>
+              <tr><td>Burndown Chart</td><td>Travail restant dans le sprint</td><td>Jira, Trello</td></tr>
+              <tr><td>Burnup Chart</td><td>Travail accompli vs périmètre</td><td>Jira, Miro</td></tr>
+              <tr><td>Cycle Time</td><td>Durée de traitement d'une tâche</td><td>Jira, Linear</td></tr>
+              <tr><td>Lead Time</td><td>Durée totale du besoin à la livraison</td><td>Kanban boards</td></tr>
+              <tr><td>Taux de bugs</td><td>Qualité de l'incrément livré</td><td>SonarQube, TestRail</td></tr>
+              <tr><td>NPS équipe (Team Health)</td><td>Bien-être et motivation</td><td>Surveys, Retros</td></tr>
+              <tr><td>Cumulative Flow Diagram</td><td>Flux et goulots d'étranglement</td><td>Kanbanize</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- ===================== SECTION 13 : DEVOPS ===================== -->
+      <section id="devops" class="section">
+        <div class="section-header">
+          <span class="section-num">13</span>
+          <div>
+            <h3 class="section-title">Agile & DevOps / CI-CD</h3>
+            <p class="section-subtitle">Accélérer les livraisons grâce à l'automatisation</p>
+          </div>
+        </div>
+
+        <div class="highlight-card">
+          <h4>L'alliance Agile + DevOps</h4>
+          <p>L'Agilité organise le travail en sprints pour livrer régulièrement. DevOps automatise le pipeline de livraison pour que chaque livraison soit fiable, rapide et répétable. Ensemble, ils constituent le fondement du <strong style="color:var(--text)">continuous delivery</strong>.</p>
+        </div>
+
+        <h4 style="font-family:Syne;font-weight:700;color:var(--text);margin-bottom:0.75rem">Pipeline CI/CD typique</h4>
+        <div class="kanban-flow" style="margin-bottom:1.5rem;flex-wrap:wrap">
+          <div class="kanban-step">💻 Code</div>
+          <span class="kanban-arrow">→</span>
+          <div class="kanban-step">🔀 Commit</div>
+          <span class="kanban-arrow">→</span>
+          <div class="kanban-step">🏗️ Build</div>
+          <span class="kanban-arrow">→</span>
+          <div class="kanban-step">🧪 Tests Auto</div>
+          <span class="kanban-arrow">→</span>
+          <div class="kanban-step">📦 Package</div>
+          <span class="kanban-arrow">→</span>
+          <div class="kanban-step">🚀 Deploy Staging</div>
+          <span class="kanban-arrow">→</span>
+          <div class="kanban-step">✅ Validation</div>
+          <span class="kanban-arrow">→</span>
+          <div class="kanban-step">🌍 Prod</div>
+        </div>
+
+        <div class="grid-2" style="margin-bottom:1.5rem">
+          <div class="card card-blue">
+            <h4>🔗 Intégration Continue (CI)</h4>
+            <ul class="styled-list">
+              <li>Chaque commit déclenche un build automatique</li>
+              <li>Tests unitaires et d'intégration automatisés</li>
+              <li>Feedback immédiat en cas d'échec</li>
+              <li>Outils : GitHub Actions, GitLab CI, Jenkins, CircleCI</li>
+            </ul>
+          </div>
+          <div class="card card-teal">
+            <h4>🚀 Livraison Continue (CD)</h4>
+            <ul class="styled-list">
+              <li>Code toujours dans un état déployable</li>
+              <li>Déploiement en staging automatique</li>
+              <li>Validation avant promotion en production</li>
+              <li>Outils : ArgoCD, Spinnaker, AWS CodeDeploy</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="card card-amber">
+          <h4>📊 DORA Metrics — Mesurer la performance DevOps</h4>
+          <div class="grid-2" style="margin-top:0.75rem">
+            <div><strong style="color:var(--text)">Deployment Frequency</strong><br><span style="font-size:13px;color:var(--text2)">À quelle fréquence déploie-t-on ?</span></div>
+            <div><strong style="color:var(--text)">Lead Time for Changes</strong><br><span style="font-size:13px;color:var(--text2)">Du commit au déploiement en prod</span></div>
+            <div><strong style="color:var(--text)">Change Failure Rate</strong><br><span style="font-size:13px;color:var(--text2)">% de déploiements causant des incidents</span></div>
+            <div><strong style="color:var(--text)">MTTR</strong><br><span style="font-size:13px;color:var(--text2)">Mean Time To Recovery — temps de restauration</span></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===================== SECTION 14 : RETRO ===================== -->
+      <section id="retro" class="section">
+        <div class="section-header">
+          <span class="section-num">14</span>
+          <div>
+            <h3 class="section-title">La Rétrospective</h3>
+            <p class="section-subtitle">Cœur de l'amélioration continue Agile</p>
+          </div>
+        </div>
+
+        <div class="highlight-card">
+          <h4>Objectif</h4>
+          <p>La rétro est l'événement le plus important pour la santé de l'équipe. Elle permet d'identifier ce qui fonctionne bien, ce qui peut être amélioré, et de définir des actions concrètes pour le prochain sprint.</p>
+        </div>
+
+        <h4 style="font-family:Syne;font-weight:700;color:var(--text);margin-bottom:1rem">Formats de rétrospective</h4>
+
+        <div class="grid-2">
+          <div class="card card-teal">
+            <h4>⛵ Sailboat (Voilier)</h4>
+            <p><strong style="color:var(--text)">Vent</strong> (ce qui propulse) · <strong style="color:var(--text)">Ancre</strong> (ce qui freine) · <strong style="color:var(--text)">Récif</strong> (risques) · <strong style="color:var(--text)">Soleil</strong> (vision). Métaphore visuelle et engageante.</p>
+          </div>
+          <div class="card card-blue">
+            <h4>🟢🟡🔴 Traffic Light</h4>
+            <p><strong style="color:var(--green)">Vert</strong> = continuer · <strong style="color:var(--amber)">Jaune</strong> = à améliorer · <strong style="color:var(--coral)">Rouge</strong> = à arrêter. Simple, universel, efficace.</p>
+          </div>
+          <div class="card card-amber">
+            <h4>😊😐😞 Team Mood</h4>
+            <p>Évaluation de la satisfaction de l'équipe sur plusieurs axes : qualité du code, ambiance, process, support. Radar visuel.</p>
+          </div>
+          <div class="card card-coral">
+            <h4>4L — Liked, Learned, Lacked, Longed for</h4>
+            <p>Ce qu'on a aimé · appris · ce qui a manqué · ce qu'on espère. Très riche en informations qualitatives.</p>
+          </div>
+        </div>
+
+        <div class="divider"></div>
+
+        <h4 style="font-family:Syne;font-weight:700;color:var(--text);margin-bottom:0.75rem">Structure en 5 phases (Esther Derby & Diana Larsen)</h4>
+        <div class="timeline">
+          <div class="timeline-item"><div class="timeline-dot"></div><div class="timeline-title">1. Préparer le terrain</div><div class="timeline-desc">Ice breaker, règles du jeu, créer un environnement safe. Rappeler la "Prime Directive" : tout le monde a fait de son mieux.</div></div>
+          <div class="timeline-item"><div class="timeline-dot"></div><div class="timeline-title">2. Recueillir les données</div><div class="timeline-desc">Collecter faits, données et émotions du sprint. Burndown, incidents, feedbacks, timeline des événements.</div></div>
+          <div class="timeline-item"><div class="timeline-dot"></div><div class="timeline-title">3. Générer des insights</div><div class="timeline-desc">Analyser les causes. Techniques : 5 Pourquoi, Fishbone (Ishikawa), dots voting sur les sujets importants.</div></div>
+          <div class="timeline-item"><div class="timeline-dot"></div><div class="timeline-title">4. Décider quoi faire</div><div class="timeline-desc">Choisir 1 à 3 actions concrètes, assignées à quelqu'un, avec une échéance. SMART.</div></div>
+          <div class="timeline-item"><div class="timeline-dot"></div><div class="timeline-title">5. Clore la rétrospective</div><div class="timeline-desc">Feedback sur la rétro elle-même. Remerciements. Suivi des actions de la rétro précédente.</div></div>
+        </div>
+      </section>
+
+      <!-- ===================== SECTION 15 : SCALE ===================== -->
+      <section id="scale" class="section">
+        <div class="section-header">
+          <span class="section-num">15</span>
+          <div>
+            <h3 class="section-title">Agilité à l'Échelle</h3>
+            <p class="section-subtitle">Coordonner plusieurs équipes agiles</p>
+          </div>
+        </div>
+
+        <div class="grid-2" style="margin-bottom:1rem">
+          <div class="card card-blue">
+            <h4>SAFe — Scaled Agile Framework</h4>
+            <p>Le plus adopté en entreprise. 4 configurations : Essential, Large Solution, Portfolio, Full. Très prescriptif, riche, mais complexe à mettre en place.</p>
+            <div style="margin-top:0.75rem"><span class="badge badge-blue">Très adopté</span></div>
+          </div>
+          <div class="card card-teal">
+            <h4>LeSS — Large Scale Scrum</h4>
+            <p>Étend Scrum à plusieurs équipes avec très peu de règles supplémentaires. Un seul Product Backlog, un seul PO. Sprint synchronisés. Minimaliste.</p>
+            <div style="margin-top:0.75rem"><span class="badge badge-teal">Minimaliste</span></div>
+          </div>
+          <div class="card card-amber">
+            <h4>Nexus (Scrum@Scale)</h4>
+            <p>Extension de Scrum pour 3 à 9 équipes. Ajout d'une Nexus Integration Team. Créé par Ken Schwaber. Reste proche de Scrum.</p>
+            <div style="margin-top:0.75rem"><span class="badge badge-amber">Proche Scrum</span></div>
+          </div>
+          <div class="card card-coral">
+            <h4>Spotify Model</h4>
+            <p>Organisation en Squads (équipes), Tribes (regroupements), Chapters (compétences transverses) et Guilds (communautés de pratique). Inspirant mais non-prescriptif.</p>
+            <div style="margin-top:0.75rem"><span class="badge badge-coral">Culturel</span></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===================== SECTION 16 : PIEGES ===================== -->
+      <section id="pieges" class="section">
+        <div class="section-header">
+          <span class="section-num">16</span>
+          <div>
+            <h3 class="section-title">Pièges & Anti-patterns</h3>
+            <p class="section-subtitle">Les erreurs fréquentes dans l'adoption de l'Agilité</p>
+          </div>
+        </div>
+
+        <div class="card card-coral" style="margin-bottom:1rem">
+          <h4>⚠️ Dark Scrum</h4>
+          <p>Utiliser les cérémonies Scrum sans en respecter l'esprit. Sprints servant de prétexte à une pression accrue sur les développeurs. Daily Scrum transformé en "réunion de reporting" au management.</p>
+        </div>
+
+        <div class="grid-2" style="margin-bottom:1rem">
+          <div class="card card-coral"><h4>🚫 Fake Agile</h4><p>Agile washing : utiliser la terminologie agile (sprint, backlog) sans adopter les valeurs. On change les mots mais pas les comportements.</p></div>
+          <div class="card card-amber"><h4>🚫 PO absent</h4><p>Un Product Owner qui n'est pas disponible, qui ne priorise pas ou qui change d'avis constamment bloque l'équipe et crée de la confusion.</p></div>
+          <div class="card card-blue"><h4>🚫 Sprints surchargés</h4><p>Accepter trop de travail par rapport à la vélocité réelle. Le sprint devient une course contre la montre, nuisant à la qualité et au moral.</p></div>
+          <div class="card card-purple"><h4>🚫 Dette technique ignorée</h4><p>Ne jamais allouer de temps au refactoring. La dette s'accumule jusqu'à ralentir irrémédiablement les livraisons.</p></div>
+          <div class="card card-green"><h4>🚫 Micromanagement</h4><p>Un manager qui dicte les tâches au lieu de faire confiance à l'équipe auto-organisée. Détruit la motivation et l'initiative.</p></div>
+          <div class="card card-teal"><h4>🚫 Retros sans actions</h4><p>Organiser des rétrospectives sans définir d'actions concrètes ou sans suivre leur réalisation. La rétro devient une perte de temps.</p></div>
+        </div>
+
+        <div class="quote">
+          "Agile is not a process, it's a mindset. You can't 'do Agile', you have to 'be Agile'."
+          <cite>— Dave Thomas, co-auteur du Manifeste Agile</cite>
+        </div>
+
+        <div class="divider"></div>
+
+        <h4 style="font-family:Syne;font-weight:700;color:var(--text);margin-bottom:1rem">Récapitulatif — Ce qu'un CDA doit maîtriser</h4>
+        <div class="highlight-card">
+          <h4>Compétences clés pour l'examen et le métier</h4>
+          <ul class="styled-list">
+            <li>Expliquer les 4 valeurs et 12 principes du Manifeste Agile</li>
+            <li>Décrire les rôles, événements et artefacts Scrum avec leurs engagements</li>
+            <li>Rédiger une User Story conforme au format INVEST avec critères d'acceptation</li>
+            <li>Pratiquer le Planning Poker et calculer une vélocité</li>
+            <li>Distinguer Scrum, Kanban, XP et leurs cas d'usage</li>
+            <li>Comprendre l'intégration CI/CD dans un contexte agile</li>
+            <li>Identifier les pièges et anti-patterns courants</li>
+            <li>Animer ou participer à une rétrospective productive</li>
+          </ul>
+        </div>
+      </section>
+
+    </div><!-- end content -->
+  </main>
+</div>
+
+<script>
+  const links = document.querySelectorAll('.nav-link');
+  const sections = document.querySelectorAll('.section');
+
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        const id = entry.target.id;
+        links.forEach(l => l.classList.remove('active'));
+        const active = document.querySelector(`.nav-link[href="#${id}"]`);
+        if (active) active.classList.add('active');
+      }
+    });
+  }, { threshold: 0.3 });
+
+  sections.forEach(s => observer.observe(s));
+
+  links.forEach(link => {
+    link.addEventListener('click', () => {
+      const target = document.querySelector(link.getAttribute('href'));
+      if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
+  });
+</script>
+
+</body>
+</html>
