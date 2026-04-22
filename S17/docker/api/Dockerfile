@@ -1,6 +1,6 @@
 FROM node:lts-alpine3.22
 
-WORKDIR /api
+WORKDIR /app
 
 COPY package*.json /
 

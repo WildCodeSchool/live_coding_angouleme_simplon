@@ -1,0 +1,22 @@
+services:
+  client:
+    build:
+      context: ./client
+      dockerfile: Dockerfile
+    ports:
+      - 3002:3002
+    env_file:
+      - ./client/.env
+
+    depends_on:
+      - api
+    volumes:
+      - ./client/src:/app/src
+  api:
+    build:
+      context: ./api
+      dockerfile: Dockerfile
+    ports:
+      - 3005:3005
+    volumes:
+      - ./api:/app
