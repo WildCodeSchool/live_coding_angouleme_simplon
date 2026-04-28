@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cours CI/CD et GitHub Actions</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <div class="container">
+        <div class="slide-counter">
+            <span id="current-slide">1</span> / <span id="total-slides">15</span>
+        </div>
+
+        <!-- Slide 1: Title -->
+        <div class="slide active title-slide">
+            <h1>CI/CD et GitHub Actions</h1>
+            <p class="subtitle">Intégration et Déploiement Continus</p>
+            <p class="author">Cours DevOps - Formation Professionnelle</p>
+        </div>
+
+        <!-- Slide 2: Introduction -->
+        <div class="slide">
+            <h2>🎯 Objectifs du Cours</h2>
+            <ul>
+                <li>Comprendre les concepts fondamentaux de CI/CD</li>
+                <li>Maîtriser GitHub Actions et ses composants</li>
+                <li>Créer des pipelines d'intégration continue</li>
+                <li>Mettre en place des déploiements automatisés</li>
+                <li>Appliquer les bonnes pratiques DevOps</li>
+            </ul>
+            <div class="info">
+                <strong>Prérequis :</strong> Connaissances de base en Git, développement logiciel et ligne de commande
+            </div>
+        </div>
+
+        <!-- Slide 3: Qu'est-ce que CI/CD -->
+        <div class="slide">
+            <h2>🔄 Qu'est-ce que CI/CD ?</h2>
+            <h3>CI - Intégration Continue (Continuous Integration)</h3>
+            <p>Pratique consistant à <span class="highlight">intégrer fréquemment</span> les modifications de code dans
+                un référentiel partagé, où des tests automatisés vérifient chaque intégration.</p>
+
+            <h3>CD - Déploiement Continu (Continuous Deployment/Delivery)</h3>
+            <p>Extension de CI qui automatise le <span class="highlight">déploiement</span> des applications après
+                validation des tests.</p>
+
+            <div class="diagram">
+                <div class="step">Code</div>
+                <span class="arrow">→</span>
+                <div class="step">Build</div>
+                <span class="arrow">→</span>
+                <div class="step">Test</div>
+                <span class="arrow">→</span>
+                <div class="step">Deploy</div>
+            </div>
+        </div>
+
+        <!-- Slide 4: Avantages CI/CD -->
+        <div class="slide">
+            <h2>✅ Avantages du CI/CD</h2>
+            <ul>
+                <li><strong>Détection précoce des erreurs</strong> - Les bugs sont identifiés rapidement</li>
+                <li><strong>Réduction des risques</strong> - Déploiements plus petits et fréquents</li>
+                <li><strong>Livraison plus rapide</strong> - Automatisation des processus manuels</li>
+                <li><strong>Amélioration de la qualité</strong> - Tests automatisés systématiques</li>
+                <li><strong>Collaboration renforcée</strong> - Intégration fluide des équipes</li>
+                <li><strong>Retour rapide</strong> - Feedback immédiat sur les modifications</li>
+            </ul>
+            <div class="warning">
+                <strong>Important :</strong> Le CI/CD n'est pas seulement un outil, c'est une culture et une pratique
+                qui nécessite l'engagement de toute l'équipe.
+            </div>
+        </div>
+
+        <!-- Slide 5: Introduction GitHub Actions -->
+        <div class="slide">
+            <h2>🚀 Introduction à GitHub Actions</h2>
+            <p>GitHub Actions est une plateforme d'<span class="highlight">automatisation CI/CD</span> intégrée
+                directement dans GitHub.</p>
+
+            <h3>Caractéristiques principales :</h3>
+            <ul>
+                <li>Intégration native avec les repositories GitHub</li>
+                <li>Workflows basés sur des événements</li>
+                <li>Marketplace d'actions réutilisables</li>
+                <li>Runners hébergés ou auto-hébergés</li>
+                <li>Support multi-plateformes (Linux, Windows, macOS)</li>
+            </ul>
+
+            <div class="info">
+                <strong>Avantage :</strong> Pas besoin de service externe - tout est intégré dans GitHub !
+            </div>
+        </div>
+
+        <!-- Slide 6: Concepts de base -->
+        <div class="slide">
+            <h2>🧩 Concepts de Base</h2>
+            <h3>Workflow (Flux de travail)</h3>
+            <p>Processus automatisé défini dans un fichier YAML qui s'exécute lors d'événements spécifiques.</p>
+
+            <h3>Events (Événements)</h3>
+            <p>Déclencheurs qui lancent l'exécution d'un workflow (push, pull request, schedule, etc.).</p>
+
+            <h3>Jobs (Tâches)</h3>
+            <p>Ensemble d'étapes qui s'exécutent sur le même runner.</p>
+
+            <h3>Steps (Étapes)</h3>
+            <p>Tâches individuelles qui exécutent des commandes ou des actions.</p>
+
+            <h3>Actions</h3>
+            <p>Applications personnalisées qui effectuent des tâches complexes fréquemment répétées.</p>
+        </div>
+
+        <!-- Slide 7: Structure d'un Workflow -->
+        <div class="slide">
+            <h2>📋 Structure d'un Workflow</h2>
+            <pre><code class="language-yaml">
+                name: Mon Premier Workflow
+                on: [push, pull_request]
+
+                jobs:
+                build:
+                runs-on: ubuntu-latest
+                steps:
+                - name: Checkout du code
+                uses: actions/checkout@v3
+
+                - name: Setup Node.js
+                uses: actions/setup-node@v3
+                with:
+                node-version: '18'
+
+                - name: Installation des dépendances
+                run: npm install
+
+                - name: Exécution des tests
+                run: npm test
+            </code></pre>
+            <p>Les workflows sont stockés dans <span class="highlight">.github/workflows/</span> à la racine du
+                repository.</p>
+        </div>
+
+        <!-- Slide 8: Événements (Events) -->
+        <div class="slide">
+            <h2>⚡ Événements (Events)</h2>
+            <h3>Événements principaux :</h3>
+            <ul>
+                <li><strong>push</strong> - Déclenchement lors d'un push</li>
+                <li><strong>pull_request</strong> - Ouverture/mise à jour d'une PR</li>
+                <li><strong>schedule</strong> - Exécution programmée (cron)</li>
+                <li><strong>workflow_dispatch</strong> - Déclenchement manuel</li>
+                <li><strong>release</strong> - Création d'une release</li>
+            </ul>
+
+            <pre><code class="language-yaml">
+                # Exemples de configuration d'événements
+                on:
+                    push:
+                      branches: [ main, develop ]
+                    pull_request:
+                      branches: [ main ]
+                    schedule:
+                       - cron: '0 2 * * *' # Tous les jours à 2h
+                    workflow_dispatch: # Déclenchement manuel
+            </code></pre>
+        </div>
+
+        <!-- Slide 9: Jobs détaillés -->
+        <div class="slide">
+            <h2>⚙️ Jobs - Tâches</h2>
+            <p>Les jobs s'exécutent en <span class="highlight">parallèle</span> par défaut, mais peuvent être configurés
+                pour s'exécuter séquentiellement.</p>
+
+            <pre><code class="language-yaml">
+                jobs:
+                test:
+                runs-on: ubuntu-latest
+                steps:
+                - uses: actions/checkout@v3
+                - run: npm test
+
+                build:
+                needs: test # Attend que 'test' soit terminé
+                runs-on: ubuntu-latest
+                steps:
+                - uses: actions/checkout@v3
+                - run: npm run build
+
+                deploy:
+                needs: [test, build] # Attend test ET build
+                runs-on: ubuntu-latest
+                if: github.ref == 'refs/heads/main'
+                steps:
+                - run: echo "Déploiement en production"
+            </code></pre>
+        </div>
+
+        <!-- Slide 10: Steps et Actions -->
+        <div class="slide">
+            <h2>🔧 Steps et Actions</h2>
+            <h3>Types d'étapes :</h3>
+            <ul>
+                <li><strong>run</strong> - Exécute des commandes shell</li>
+                <li><strong>uses</strong> - Utilise une action pré-construite</li>
+            </ul>
+
+            <pre><code class="language-yaml">
+                steps:
+                # Utilisation d'une action
+                - name: Checkout du repository
+                uses: actions/checkout@v3
+
+                # Exécution d'une commande
+                - name: Afficher les fichiers
+                run: ls -la
+
+                # Commande avec variables d'environnement
+                - name: Build avec variables
+                run: |
+                echo "Building for ${{ github.ref }}"
+                npm run build
+                env:
+                NODE_ENV: production
+            </code></pre>
+        </div>
+
+        <!-- Slide 11: Runners -->
+        <div class="slide">
+            <h2>🏃 Runners</h2>
+            <p>Les runners sont les <span class="highlight">machines</span> qui exécutent vos workflows.</p>
+
+            <h3>Types de runners :</h3>
+            <ul>
+                <li><strong>GitHub-hosted</strong> - Gérés par GitHub</li>
+                <li><strong>Self-hosted</strong> - Gérés par vous</li>
+            </ul>
+
+            <h3>Runners hébergés par GitHub :</h3>
+            <pre><code class="language-yaml">
+                runs-on: ubuntu-latest # Ubuntu Linux
+                runs-on: windows-latest # Windows Server
+                runs-on: macos-latest # macOS
+            </code></pre>
+
+            <div class="info">
+                <strong>Astuce :</strong> Les runners GitHub-hosted sont gratuits pour les repositories publics avec des
+                limites de temps d'exécution.
+            </div>
+        </div>
+
+        <!-- Slide 12: Variables et Secrets -->
+        <div class="slide">
+            <h2>🔐 Variables et Secrets</h2>
+            <h3>Variables d'environnement :</h3>
+            <pre><code class="language-yaml">
+                env:
+                NODE_ENV: production
+                API_URL: https://api.example.com
+
+                steps:
+                - name: Utilisation des variables
+                run: echo "Environment: $NODE_ENV"
+            </code></pre>
+
+            <h3>Secrets :</h3>
+            <p>Stockage sécurisé d'informations sensibles (API keys, mots de passe, etc.)</p>
+            <pre><code class="language-yaml">
+                steps:
+                - name: Déploiement avec secret
+                run: |
+                echo "Déploiement vers ${{ secrets.PROD_SERVER }}"
+                # Utilisation du secret pour l'authentification
+                env:
+                API_KEY: ${{ secrets.API_KEY }}
+            </code></pre>
+
+            <div class="warning">
+                <strong>Sécurité :</strong> Ne jamais exposer les secrets dans les logs ou les écrire en dur dans le
+                code !
+            </div>
+        </div>
+
+        <!-- Slide 13: Exemple complet -->
+        <div class="slide">
+            <h2>📝 Exemple Complet - Application Node.js</h2>
+            <pre><code class="language-yaml">
+                name: CI/CD Pipeline
+
+                on:
+                push:
+                branches: [ main, develop ]
+                pull_request:
+                branches: [ main ]
+
+                jobs:
+                test:
+                runs-on: ubuntu-latest
+                strategy:
+                matrix:
+                node-version: [16, 18, 20]
+
+                steps:
+                - uses: actions/checkout@v3
+
+                - name: Setup Node.js ${{ matrix.node-version }}
+                uses: actions/setup-node@v3
+                with:
+                node-version: ${{ matrix.node-version }}
+                cache: 'npm'
+
+                - name: Install dependencies
+                run: npm ci
+
+                - name: Run tests
+                run: npm test
+
+                - name: Upload coverage reports
+                uses: codecov/codecov-action@v3
+            </code></pre>
+        </div>
+
+        <!-- Slide 14: Bonnes pratiques -->
+        <div class="slide">
+            <h2>🎯 Bonnes Pratiques</h2>
+            <ul>
+                <li><strong>Noms explicites</strong> - Utilisez des noms clairs pour workflows et jobs</li>
+                <li><strong>Tests d'abord</strong> - Toujours tester avant de déployer</li>
+                <li><strong>Matrice de tests</strong> - Testez sur plusieurs versions/plateformes</li>
+                <li><strong>Gestion des secrets</strong> - Utilisez les secrets GitHub pour les données sensibles</li>
+                <li><strong>Optimisation</strong> - Utilisez le cache pour accélérer les builds</li>
+                <li><strong>Conditionnels</strong> - Utilisez des conditions pour contrôler l'exécution</li>
+                <li><strong>Notification</strong> - Configurez des notifications pour les échecs</li>
+            </ul>
+
+            <div class="info">
+                <strong>Conseil :</strong> Commencez simple et ajoutez progressivement de la complexité selon vos
+                besoins.
+            </div>
+        </div>
+
+        <!-- Slide 15: Conclusion -->
+        <div class="slide">
+            <h2>🎉 Conclusion</h2>
+            <h3>Ce que vous avez appris :</h3>
+            <ul>
+                <li>Les concepts fondamentaux de CI/CD</li>
+                <li>L'architecture de GitHub Actions</li>
+                <li>La création de workflows automatisés</li>
+                <li>La gestion des jobs, steps et actions</li>
+                <li>Les bonnes pratiques DevOps</li>
+            </ul>
+
+            <h3>Prochaines étapes :</h3>
+            <ul>
+                <li>Créer votre premier workflow</li>
+                <li>Explorer le marketplace des actions</li>
+                <li>Expérimenter avec différents événements</li>
+                <li>Mettre en place un pipeline complet</li>
+            </ul>
+
+            <div class="info">
+                <strong>Ressources :</strong> Documentation officielle GitHub Actions, marketplace, et communauté GitHub
+            </div>
+        </div>
+    </div>
+
+    <div class="navigation">
+        <button class="nav-btn" id="prevBtn" onclick="changeSlide(-1)">← Précédent</button>
+        <button class="nav-btn" id="nextBtn" onclick="changeSlide(1)">Suivant →</button>
+    </div>
+
+    <script>
+        let currentSlide = 0;
+        const slides = document.querySelectorAll('.slide');
+        const totalSlides = slides.length;
+
+        document.getElementById('total-slides').textContent = totalSlides;
+
+        function showSlide(n) {
+            slides[currentSlide].classList.remove('active');
+            currentSlide = (n + totalSlides) % totalSlides;
+            slides[currentSlide].classList.add('active');
+
+            document.getElementById('current-slide').textContent = currentSlide + 1;
+
+            // Update navigation buttons
+            document.getElementById('prevBtn').disabled = currentSlide === 0;
+            document.getElementById('nextBtn').disabled = currentSlide === totalSlides - 1;
+        }
+
+        function changeSlide(n) {
+            if (currentSlide + n >= 0 && currentSlide + n < totalSlides) {
+                showSlide(currentSlide + n);
+            }
+        }
+
+        // Keyboard navigation
+        document.addEventListener('keydown', function (e) {
+            if (e.key === 'ArrowLeft') changeSlide(-1);
+            if (e.key === 'ArrowRight') changeSlide(1);
+        });
+
+        // Initialize
+        showSlide(0);
+    </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-bash.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-yaml.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-jsx.min.js"></script>
+</body>
+
+</html>
