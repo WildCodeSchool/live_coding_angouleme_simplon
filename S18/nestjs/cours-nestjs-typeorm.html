@@ -1,0 +1,880 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NestJS & TypeORM — Cours Complet</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;700&family=Syne:wght@400;600;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0e1a;
+    --surface: #111827;
+    --surface2: #1a2236;
+    --border: #1e2d45;
+    --accent: #e8304a;
+    --nest: #e8304a;
+    --orm: #3b82f6;
+    --text: #e2e8f0;
+    --muted: #64748b;
+    --code-bg: #0d1117;
+    --code-border: #1e2d45;
+    --green: #10b981;
+    --purple: #8b5cf6;
+    --yellow: #fbbf24;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body { background: var(--bg); color: var(--text); font-family: 'Syne', sans-serif; font-size: 16px; line-height: 1.7; overflow-x: hidden; }
+
+  .sidebar { position: fixed; top: 0; left: 0; width: 260px; height: 100vh; background: var(--surface); border-right: 1px solid var(--border); overflow-y: auto; z-index: 100; padding: 0 0 2rem; }
+  .sidebar-logo { padding: 1.5rem 1.5rem 1rem; border-bottom: 1px solid var(--border); margin-bottom: 1rem; }
+  .sidebar-logo .brand { font-size: 1.1rem; font-weight: 800; letter-spacing: -0.02em; line-height: 1.2; }
+  .brand .nest { color: var(--nest); }
+  .brand .plus { color: var(--muted); margin: 0 4px; }
+  .brand .orm { color: var(--orm); }
+  .sidebar-logo .subtitle { font-size: 0.7rem; color: var(--muted); font-family: 'JetBrains Mono', monospace; margin-top: 4px; letter-spacing: 0.1em; text-transform: uppercase; }
+  .nav-label { font-size: 0.6rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.12em; font-family: 'JetBrains Mono', monospace; padding: 0.5rem 1.5rem 0.25rem; }
+  .nav-section { padding: 0 0.75rem; margin-bottom: 0.5rem; }
+  .nav-item { display: flex; align-items: center; gap: 8px; padding: 0.45rem 0.75rem; border-radius: 6px; text-decoration: none; color: var(--muted); font-size: 0.82rem; font-weight: 600; transition: all 0.2s; cursor: pointer; }
+  .nav-item:hover, .nav-item.active { background: var(--surface2); color: var(--text); }
+  .nav-item .dot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
+
+  .main { margin-left: 260px; min-height: 100vh; }
+
+  .hero { position: relative; padding: 5rem 4rem 4rem; overflow: hidden; border-bottom: 1px solid var(--border); }
+  .hero-grid { position: absolute; inset: 0; background-image: linear-gradient(rgba(232,48,74,0.05) 1px, transparent 1px), linear-gradient(90deg, rgba(232,48,74,0.05) 1px, transparent 1px); background-size: 40px 40px; }
+  .hero-glow { position: absolute; top: -100px; right: -100px; width: 500px; height: 500px; background: radial-gradient(circle, rgba(232,48,74,0.12) 0%, transparent 70%); }
+  .hero-glow2 { position: absolute; bottom: -100px; left: 100px; width: 400px; height: 400px; background: radial-gradient(circle, rgba(59,130,246,0.08) 0%, transparent 70%); }
+  .hero-content { position: relative; z-index: 1; max-width: 800px; }
+  .hero-badge { display: inline-flex; align-items: center; gap: 6px; background: rgba(232,48,74,0.1); border: 1px solid rgba(232,48,74,0.3); border-radius: 100px; padding: 4px 12px; font-size: 0.7rem; color: var(--accent); font-family: 'JetBrains Mono', monospace; text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 1.5rem; }
+  .hero-badge::before { content: ''; width: 6px; height: 6px; border-radius: 50%; background: var(--accent); animation: pulse 2s infinite; }
+  @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
+  .hero h1 { font-size: 3.5rem; font-weight: 800; letter-spacing: -0.04em; line-height: 1.05; margin-bottom: 1rem; }
+  .hero h1 .line2 { color: var(--muted); }
+  .hero h1 .highlight { color: var(--accent); }
+  .hero h1 .highlight2 { color: var(--orm); }
+  .hero-desc { font-size: 1.05rem; color: var(--muted); max-width: 600px; margin-bottom: 2rem; line-height: 1.8; }
+  .hero-stats { display: flex; gap: 2rem; }
+  .stat { text-align: center; }
+  .stat-num { font-size: 1.5rem; font-weight: 800; color: var(--text); font-family: 'JetBrains Mono', monospace; }
+  .stat-label { font-size: 0.7rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.1em; }
+
+  .section { padding: 4rem; border-bottom: 1px solid var(--border); }
+  .section-header { display: flex; align-items: center; gap: 1rem; margin-bottom: 2.5rem; }
+  .section-num { font-family: 'JetBrains Mono', monospace; font-size: 0.7rem; color: var(--muted); background: var(--surface2); border: 1px solid var(--border); border-radius: 4px; padding: 2px 8px; flex-shrink: 0; }
+  .section h2 { font-size: 1.8rem; font-weight: 800; letter-spacing: -0.03em; }
+  .section h3 { font-size: 1.1rem; font-weight: 700; margin: 2rem 0 0.75rem; color: var(--text); }
+  .section p { color: #94a3b8; margin-bottom: 1rem; line-height: 1.8; }
+
+  .card-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1rem; margin: 1.5rem 0; }
+  .card { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 1.25rem; transition: border-color 0.2s, transform 0.2s; }
+  .card:hover { border-color: var(--accent); transform: translateY(-2px); }
+  .card-icon { font-size: 1.5rem; margin-bottom: 0.75rem; }
+  .card h4 { font-size: 0.9rem; font-weight: 700; margin-bottom: 0.5rem; color: var(--text); }
+  .card p { font-size: 0.82rem; color: var(--muted); margin: 0; line-height: 1.6; }
+
+  .code-block { background: var(--code-bg); border: 1px solid var(--code-border); border-radius: 10px; overflow: hidden; margin: 1.5rem 0; font-family: 'JetBrains Mono', monospace; }
+  .code-header { display: flex; align-items: center; justify-content: space-between; padding: 0.75rem 1rem; border-bottom: 1px solid var(--code-border); background: rgba(255,255,255,0.02); }
+  .code-header-left { display: flex; align-items: center; gap: 8px; }
+  .code-dot { width: 10px; height: 10px; border-radius: 50%; }
+  .dot-red { background: #ff5f57; }
+  .dot-yellow { background: #ffbd2e; }
+  .dot-green { background: #27c93f; }
+  .code-filename { font-size: 0.72rem; color: var(--muted); margin-left: 4px; }
+  .code-lang { font-size: 0.65rem; color: var(--muted); background: var(--surface2); padding: 2px 8px; border-radius: 4px; text-transform: uppercase; letter-spacing: 0.08em; }
+  pre { padding: 1.25rem; overflow-x: auto; font-size: 0.8rem; line-height: 1.7; }
+
+  .kw { color: #c792ea; } .fn { color: #82aaff; } .str { color: #c3e88d; } .num { color: #f78c6c; } .cm { color: #546e7a; font-style: italic; } .dec { color: #ffcb6b; } .cls { color: #ffcb6b; } .prop { color: #80cbc4; } .op { color: #89ddff; } .type { color: #f07178; } .imp { color: #89ddff; }
+
+  .lifecycle { display: flex; align-items: stretch; gap: 0; margin: 2rem 0; overflow-x: auto; padding-bottom: 0.5rem; }
+  .lc-step { flex: 1; min-width: 110px; background: var(--surface); border: 1px solid var(--border); padding: 1rem 0.5rem; text-align: center; position: relative; transition: border-color 0.2s; }
+  .lc-step:not(:last-child)::after { content: '→'; position: absolute; right: -12px; top: 50%; transform: translateY(-50%); color: var(--accent); font-size: 1rem; z-index: 1; }
+  .lc-step:first-child { border-radius: 8px 0 0 8px; }
+  .lc-step:last-child { border-radius: 0 8px 8px 0; }
+  .lc-step:hover { border-color: var(--accent); }
+  .lc-num { font-family: 'JetBrains Mono', monospace; font-size: 0.62rem; color: var(--accent); margin-bottom: 4px; }
+  .lc-name { font-size: 0.7rem; font-weight: 700; color: var(--text); margin-bottom: 4px; }
+  .lc-desc { font-size: 0.58rem; color: var(--muted); line-height: 1.4; }
+
+  .concept-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1rem; margin: 1.5rem 0; }
+  .concept-card { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 1.25rem; border-left: 3px solid; }
+  .concept-card.decorator { border-left-color: var(--yellow); }
+  .concept-card.pipe { border-left-color: var(--green); }
+  .concept-card.middleware { border-left-color: var(--purple); }
+  .concept-card.service { border-left-color: var(--orm); }
+  .concept-card.guard { border-left-color: var(--accent); }
+  .concept-card.interceptor { border-left-color: #06b6d4; }
+  .concept-card.module { border-left-color: #f97316; }
+  .concept-card.controller { border-left-color: #ec4899; }
+  .concept-tag { display: inline-block; font-family: 'JetBrains Mono', monospace; font-size: 0.62rem; padding: 2px 8px; border-radius: 4px; margin-bottom: 0.5rem; text-transform: uppercase; letter-spacing: 0.08em; }
+  .concept-card.decorator .concept-tag { background: rgba(251,191,36,0.1); color: var(--yellow); }
+  .concept-card.pipe .concept-tag { background: rgba(16,185,129,0.1); color: var(--green); }
+  .concept-card.middleware .concept-tag { background: rgba(139,92,246,0.1); color: var(--purple); }
+  .concept-card.service .concept-tag { background: rgba(59,130,246,0.1); color: var(--orm); }
+  .concept-card.guard .concept-tag { background: rgba(232,48,74,0.1); color: var(--accent); }
+  .concept-card.interceptor .concept-tag { background: rgba(6,182,212,0.1); color: #06b6d4; }
+  .concept-card.module .concept-tag { background: rgba(249,115,22,0.1); color: #f97316; }
+  .concept-card.controller .concept-tag { background: rgba(236,72,153,0.1); color: #ec4899; }
+  .concept-card h4 { font-size: 0.9rem; font-weight: 700; margin-bottom: 0.5rem; }
+  .concept-card p { font-size: 0.8rem; color: var(--muted); margin: 0; line-height: 1.6; }
+
+  .callout { background: var(--surface); border: 1px solid var(--border); border-left: 3px solid; border-radius: 0 8px 8px 0; padding: 1rem 1.25rem; margin: 1.5rem 0; }
+  .callout.info { border-left-color: var(--orm); }
+  .callout.warning { border-left-color: var(--yellow); }
+  .callout.tip { border-left-color: var(--green); }
+  .callout-label { font-family: 'JetBrains Mono', monospace; font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 0.5rem; font-weight: 700; }
+  .callout.info .callout-label { color: var(--orm); }
+  .callout.warning .callout-label { color: var(--yellow); }
+  .callout.tip .callout-label { color: var(--green); }
+  .callout p { color: #94a3b8; font-size: 0.85rem; margin: 0; line-height: 1.7; }
+
+  table { width: 100%; border-collapse: collapse; margin: 1.5rem 0; font-size: 0.85rem; }
+  th { background: var(--surface2); color: var(--text); font-weight: 700; padding: 0.75rem 1rem; text-align: left; border: 1px solid var(--border); font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em; }
+  td { padding: 0.65rem 1rem; border: 1px solid var(--border); color: #94a3b8; vertical-align: top; }
+  tr:hover td { background: rgba(255,255,255,0.02); }
+
+  .badge { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 0.65rem; font-family: 'JetBrains Mono', monospace; font-weight: 700; }
+  .badge-red { background: rgba(232,48,74,0.15); color: var(--accent); }
+  .badge-blue { background: rgba(59,130,246,0.15); color: var(--orm); }
+  .badge-green { background: rgba(16,185,129,0.15); color: var(--green); }
+
+  .progress-bar { position: fixed; top: 0; left: 0; height: 2px; background: linear-gradient(90deg, var(--accent), var(--orm)); z-index: 200; transition: width 0.1s; width: 0%; }
+
+  .file-tree { background: var(--code-bg); border: 1px solid var(--code-border); border-radius: 10px; padding: 1.25rem; font-family: 'JetBrains Mono', monospace; font-size: 0.78rem; line-height: 2; margin: 1.5rem 0; }
+  .ft-dir { color: var(--orm); }
+  .ft-file { color: #94a3b8; }
+  .ft-file.entity { color: var(--yellow); }
+  .ft-file.module { color: #f97316; }
+  .ft-file.service { color: var(--orm); }
+  .ft-file.controller { color: #ec4899; }
+  .ft-file.dto { color: var(--green); }
+  .ft-file.config { color: var(--purple); }
+
+  .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin: 1.5rem 0; }
+
+  code { font-family: 'JetBrains Mono', monospace; background: var(--surface2); border: 1px solid var(--border); padding: 1px 6px; border-radius: 4px; font-size: 0.82em; color: #f97316; }
+  ul, ol { padding-left: 1.5rem; color: #94a3b8; margin-bottom: 1rem; }
+  li { margin-bottom: 0.4rem; line-height: 1.7; font-size: 0.9rem; }
+  strong { color: var(--text); font-weight: 700; }
+
+  @media (max-width: 900px) { .sidebar { width: 200px; } .main { margin-left: 200px; } .hero { padding: 3rem 2rem; } .section { padding: 3rem 2rem; } .hero h1 { font-size: 2.2rem; } }
+  @media (max-width: 600px) { .sidebar { display: none; } .main { margin-left: 0; } .two-col { grid-template-columns: 1fr; } }
+</style>
+</head>
+<body>
+
+<div class="progress-bar" id="progress"></div>
+
+<nav class="sidebar">
+  <div class="sidebar-logo">
+    <div class="brand"><span class="nest">Nest</span><span class="plus">+</span><span class="orm">TypeORM</span></div>
+    <div class="subtitle">Cours complet</div>
+  </div>
+  <div class="nav-label">NestJS</div>
+  <div class="nav-section">
+    <a class="nav-item" href="#definition"><span class="dot" style="background:#e8304a"></span> Définition</a>
+    <a class="nav-item" href="#approche"><span class="dot" style="background:#e8304a"></span> Architecture & Approche</a>
+    <a class="nav-item" href="#concepts"><span class="dot" style="background:#e8304a"></span> Concepts Clés</a>
+    <a class="nav-item" href="#lifecycle"><span class="dot" style="background:#e8304a"></span> Cycle de vie HTTP</a>
+  </div>
+  <div class="nav-label">TypeORM</div>
+  <div class="nav-section">
+    <a class="nav-item" href="#typeorm"><span class="dot" style="background:#3b82f6"></span> Définition & Principes</a>
+  </div>
+  <div class="nav-label">Pratique</div>
+  <div class="nav-section">
+    <a class="nav-item" href="#projet"><span class="dot" style="background:#10b981"></span> Projet Complet MySQL</a>
+  </div>
+</nav>
+
+<main class="main">
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="hero-grid"></div>
+    <div class="hero-glow"></div>
+    <div class="hero-glow2"></div>
+    <div class="hero-content">
+      <div class="hero-badge">Cours Backend · Node.js</div>
+      <h1><span class="highlight">NestJS</span><br><span class="line2">&amp; </span><span class="highlight2">TypeORM</span><br>Cours Complet</h1>
+      <p class="hero-desc">Maîtrisez le développement d'APIs robustes avec NestJS, le framework Node.js progressif inspiré d'Angular, et TypeORM, l'ORM TypeScript de référence.</p>
+      <div class="hero-stats">
+        <div class="stat"><div class="stat-num">6</div><div class="stat-label">Chapitres</div></div>
+        <div class="stat"><div class="stat-num">8+</div><div class="stat-label">Concepts</div></div>
+        <div class="stat"><div class="stat-num">20+</div><div class="stat-label">Exemples code</div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 1. DÉFINITION -->
+  <section class="section" id="definition">
+    <div class="section-header">
+      <span class="section-num">01</span>
+      <h2>Qu'est-ce que <span style="color:var(--accent)">NestJS</span> ?</h2>
+    </div>
+
+    <p><strong>NestJS</strong> est un framework Node.js progressif pour construire des applications côté serveur efficaces, fiables et scalables. Écrit en <strong>TypeScript</strong>, il combine POO, Programmation Fonctionnelle et Programmation Réactive Fonctionnelle.</p>
+
+    <div class="callout info">
+      <div class="callout-label">💡 Philosophie</div>
+      <p>NestJS résout un problème fondamental : Node.js offre une liberté totale d'architecture, mais cette liberté mène souvent à un code désorganisé. NestJS impose une structure claire et opinionée inspirée d'Angular, tout en restant compatible avec Express et Fastify en sous-couche.</p>
+    </div>
+
+    <h3>Pourquoi NestJS ?</h3>
+    <div class="card-grid">
+      <div class="card"><div class="card-icon">🏗️</div><h4>Architecture structurée</h4><p>Organisation claire via des modules, contrôleurs et services. Idéal pour les grandes équipes et les projets durables.</p></div>
+      <div class="card"><div class="card-icon">🔷</div><h4>TypeScript natif</h4><p>Typage statique, autocomplétion, détection d'erreurs à la compilation. Développement plus sûr et productif.</p></div>
+      <div class="card"><div class="card-icon">⚡</div><h4>Performance Express/Fastify</h4><p>Basé sur Express par défaut (ou Fastify), NestJS hérite de leurs performances tout en ajoutant une couche d'abstraction élégante.</p></div>
+      <div class="card"><div class="card-icon">🔌</div><h4>Injection de dépendances</h4><p>Système d'IoC (Inversion of Control) intégré. Couplage faible et testabilité maximale entre les composants.</p></div>
+      <div class="card"><div class="card-icon">🧩</div><h4>Ecosystème riche</h4><p>CLI puissante, support natif de WebSockets, GraphQL, microservices, gRPC, CQRS, et bien plus encore.</p></div>
+      <div class="card"><div class="card-icon">🧪</div><h4>Testabilité</h4><p>Architecture pensée pour les tests unitaires et d'intégration, compatible Jest out-of-the-box.</p></div>
+    </div>
+
+    <h3>NestJS vs les alternatives</h3>
+    <table>
+      <tr><th>Framework</th><th>Langage</th><th>Architecture</th><th>Courbe d'apprentissage</th><th>Cas d'usage</th></tr>
+      <tr><td><strong>NestJS</strong></td><td>TypeScript</td><td>Opinionée, modulaire</td><td><span class="badge badge-blue">Moyenne</span></td><td>APIs REST, GraphQL, Microservices</td></tr>
+      <tr><td>Express.js</td><td>JS/TS</td><td>Libre (minimaliste)</td><td><span class="badge badge-green">Faible</span></td><td>APIs simples, prototypes</td></tr>
+      <tr><td>Fastify</td><td>JS/TS</td><td>Libre (rapide)</td><td><span class="badge badge-green">Faible</span></td><td>APIs haute performance</td></tr>
+      <tr><td>Hapi.js</td><td>JS/TS</td><td>Opinionée</td><td><span class="badge badge-blue">Moyenne</span></td><td>APIs sécurisées d'entreprise</td></tr>
+    </table>
+
+    <h3>Installation rapide</h3>
+    <div class="code-block">
+      <div class="code-header"><div class="code-header-left"><span class="code-dot dot-red"></span><span class="code-dot dot-yellow"></span><span class="code-dot dot-green"></span><span class="code-filename">terminal</span></div><span class="code-lang">bash</span></div>
+      <pre><span class="cm"># Installer la CLI NestJS globalement</span>
+<span class="fn">npm</span> install -g @nestjs/cli
+
+<span class="cm"># Créer un nouveau projet</span>
+<span class="fn">nest</span> new mon-projet
+
+<span class="cm"># Lancer en mode développement (hot-reload)</span>
+<span class="fn">npm</span> run start:dev
+
+<span class="cm"># Commandes de génération de code</span>
+<span class="fn">nest</span> g module users       <span class="cm"># Génère un module</span>
+<span class="fn">nest</span> g controller users   <span class="cm"># Génère un controller</span>
+<span class="fn">nest</span> g service users      <span class="cm"># Génère un service</span>
+<span class="fn">nest</span> g resource posts     <span class="cm"># Génère un CRUD complet</span></pre>
+    </div>
+  </section>
+
+  <!-- 2. ARCHITECTURE -->
+  <section class="section" id="approche">
+    <div class="section-header">
+      <span class="section-num">02</span>
+      <h2>Architecture & <span style="color:var(--accent)">Approche</span></h2>
+    </div>
+
+    <p>NestJS adopte une architecture <strong>modulaire et en couches</strong>, fortement inspirée d'Angular. Chaque fonctionnalité est encapsulée dans un <strong>Module</strong>, qui regroupe des Controllers, des Services et d'autres providers.</p>
+
+    <h3>Architecture en couches (Layered Architecture)</h3>
+    <div class="card-grid" style="grid-template-columns: repeat(3, 1fr);">
+      <div class="card" style="border-top: 2px solid #ec4899; text-align:center;"><div class="card-icon">🎮</div><h4>Couche Présentation</h4><p><strong>Controllers</strong> — Reçoit les requêtes HTTP, délègue la logique aux services, retourne les réponses.</p></div>
+      <div class="card" style="border-top: 2px solid #3b82f6; text-align:center;"><div class="card-icon">⚙️</div><h4>Couche Métier</h4><p><strong>Services / Providers</strong> — Contient toute la logique métier de l'application. Réutilisable et testable.</p></div>
+      <div class="card" style="border-top: 2px solid #10b981; text-align:center;"><div class="card-icon">🗄️</div><h4>Couche Données</h4><p><strong>Repositories / TypeORM</strong> — Gère l'accès à la base de données. Abstraction complète des requêtes SQL.</p></div>
+    </div>
+
+    <h3>Le Module : brique fondamentale</h3>
+    <p>Un module NestJS est une classe décorée avec <code>@Module()</code>. Chaque application a au minimum un <strong>AppModule</strong> racine. Les modules s'organisent par domaine fonctionnel et gèrent leurs propres dépendances.</p>
+
+    <div class="code-block">
+      <div class="code-header"><div class="code-header-left"><span class="code-dot dot-red"></span><span class="code-dot dot-yellow"></span><span class="code-dot dot-green"></span><span class="code-filename">app.module.ts</span></div><span class="code-lang">TypeScript</span></div>
+      <pre><span class="imp">import</span> { <span class="cls">Module</span> } <span class="imp">from</span> <span class="str">'@nestjs/common'</span>;
+<span class="imp">import</span> { <span class="cls">UsersModule</span> } <span class="imp">from</span> <span class="str">'./users/users.module'</span>;
+<span class="imp">import</span> { <span class="cls">ProductsModule</span> } <span class="imp">from</span> <span class="str">'./products/products.module'</span>;
+
+<span class="dec">@Module</span>({
+  <span class="prop">imports</span>: [<span class="cls">UsersModule</span>, <span class="cls">ProductsModule</span>],  <span class="cm">// Modules importés</span>
+  <span class="prop">controllers</span>: [],                           <span class="cm">// Controllers du module racine</span>
+  <span class="prop">providers</span>: [],                              <span class="cm">// Services / Providers</span>
+  <span class="prop">exports</span>: [],                                <span class="cm">// Exposé à d'autres modules</span>
+})
+<span class="kw">export class</span> <span class="cls">AppModule</span> {}</pre>
+    </div>
+
+    <h3>Principes de conception</h3>
+    <div class="two-col">
+      <div>
+        <h3 style="margin-top:0">SOLID appliqué à NestJS</h3>
+        <ul>
+          <li><strong>S</strong> — Un service = une responsabilité précise</li>
+          <li><strong>O</strong> — Extension via modules sans modifier l'existant</li>
+          <li><strong>L</strong> — Substitution via l'injection de dépendances</li>
+          <li><strong>I</strong> — Interfaces granulaires pour les providers</li>
+          <li><strong>D</strong> — Dépendance aux abstractions, pas aux implémentations</li>
+        </ul>
+      </div>
+      <div>
+        <h3 style="margin-top:0">DDD-friendly</h3>
+        <ul>
+          <li>Organisation par domaine métier (users, orders, products…)</li>
+          <li>Bounded contexts représentés par des modules</li>
+          <li>Entités et value objects via TypeORM</li>
+          <li>Repository pattern natif</li>
+          <li>Events via EventEmitter ou module CQRS</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="callout tip">
+      <div class="callout-label">✅ Bonne pratique</div>
+      <p>Organisez vos modules par domaine fonctionnel, pas par type technique. Préférez un <code>UsersModule</code> contenant controller + service + entity à des répertoires <code>controllers/</code> et <code>services/</code> séparés à la racine.</p>
+    </div>
+  </section>
+
+  <!-- 3. CONCEPTS -->
+  <section class="section" id="concepts">
+    <div class="section-header">
+      <span class="section-num">03</span>
+      <h2>Concepts <span style="color:var(--accent)">Clés</span></h2>
+    </div>
+
+    <p>NestJS repose sur un ensemble de blocs de construction qui structurent le traitement des requêtes de façon prévisible et extensible.</p>
+
+    <div class="concept-grid">
+      <div class="concept-card decorator"><span class="concept-tag">Decorator</span><h4>Décorateurs</h4><p>Annotations TypeScript (syntaxe <code>@NomDecorator</code>) enrichissant les classes, méthodes ou paramètres avec des métadonnées. Au cœur de NestJS : <code>@Controller()</code>, <code>@Get()</code>, <code>@Injectable()</code>, <code>@Body()</code>, <code>@Param()</code>...</p></div>
+      <div class="concept-card pipe"><span class="concept-tag">Pipe</span><h4>Pipes</h4><p>Transforment et valident les données d'entrée <em>avant</em> qu'elles atteignent le handler. <code>ValidationPipe</code> valide les DTOs, <code>ParseIntPipe</code> convertit strings → entiers. Lèvent automatiquement une erreur 400 si invalide.</p></div>
+      <div class="concept-card middleware"><span class="concept-tag">Middleware</span><h4>Middleware</h4><p>S'exécutent avant le routing. Identiques aux middlewares Express : accèdent aux objets <code>req</code>, <code>res</code> et <code>next()</code>. Utilisés pour les logs, la compression, CORS, l'authentification basique.</p></div>
+      <div class="concept-card service"><span class="concept-tag">Service / Provider</span><h4>Services &amp; Providers</h4><p>Classes décorées <code>@Injectable()</code> injectées via le système IoC. Contiennent la logique métier. Un provider peut être un service, un repository, une factory, une valeur constante, etc.</p></div>
+      <div class="concept-card guard"><span class="concept-tag">Guard</span><h4>Guards</h4><p>Déterminent si une requête doit être traitée. Implémentent <code>CanActivate</code>. Utilisés pour l'authentification JWT et l'autorisation RBAC. Retournent <code>true</code> (autorisé) ou <code>false</code> (403 Forbidden).</p></div>
+      <div class="concept-card interceptor"><span class="concept-tag">Interceptor</span><h4>Interceptors</h4><p>Inspirés de l'AOP (Aspect-Oriented Programming). S'exécutent avant ET après le handler. Permettent : transformation des réponses, mise en cache, logging des performances, gestion des timeouts.</p></div>
+      <div class="concept-card module"><span class="concept-tag">Module</span><h4>Modules</h4><p>Organisent l'application en unités fonctionnelles. Chaque module encapsule son contexte (controllers, providers). Le système d'imports/exports gère les dépendances inter-modules proprement.</p></div>
+      <div class="concept-card controller"><span class="concept-tag">Controller</span><h4>Controllers</h4><p>Gèrent les routes HTTP entrantes. Chaque méthode correspond à un endpoint : <code>@Get()</code>, <code>@Post()</code>, <code>@Put()</code>, <code>@Delete()</code>, <code>@Patch()</code>. Délèguent toute la logique aux services.</p></div>
+    </div>
+
+    <h3>Exemple : Controller complet</h3>
+    <div class="code-block">
+      <div class="code-header"><div class="code-header-left"><span class="code-dot dot-red"></span><span class="code-dot dot-yellow"></span><span class="code-dot dot-green"></span><span class="code-filename">users.controller.ts</span></div><span class="code-lang">TypeScript</span></div>
+      <pre><span class="imp">import</span> { <span class="cls">Controller</span>, <span class="cls">Get</span>, <span class="cls">Post</span>, <span class="cls">Put</span>, <span class="cls">Delete</span>,
+         <span class="cls">Body</span>, <span class="cls">Param</span>, <span class="cls">ParseIntPipe</span>, <span class="cls">UseGuards</span>,
+         <span class="cls">ValidationPipe</span>, <span class="cls">HttpCode</span>, <span class="cls">HttpStatus</span> } <span class="imp">from</span> <span class="str">'@nestjs/common'</span>;
+<span class="imp">import</span> { <span class="cls">UsersService</span> } <span class="imp">from</span> <span class="str">'./users.service'</span>;
+<span class="imp">import</span> { <span class="cls">CreateUserDto</span> } <span class="imp">from</span> <span class="str">'./dto/create-user.dto'</span>;
+<span class="imp">import</span> { <span class="cls">JwtAuthGuard</span> } <span class="imp">from</span> <span class="str">'../auth/jwt-auth.guard'</span>;
+
+<span class="dec">@Controller</span>(<span class="str">'users'</span>)           <span class="cm">// Préfixe de route : /users</span>
+<span class="kw">export class</span> <span class="cls">UsersController</span> {
+
+  <span class="cm">// Injection du service via le constructeur</span>
+  <span class="kw">constructor</span>(<span class="kw">private readonly</span> usersService: <span class="cls">UsersService</span>) {}
+
+  <span class="dec">@Get</span>()                       <span class="cm">// GET /users</span>
+  <span class="fn">findAll</span>() {
+    <span class="kw">return</span> <span class="kw">this</span>.usersService.<span class="fn">findAll</span>();
+  }
+
+  <span class="dec">@Get</span>(<span class="str">':id'</span>)                  <span class="cm">// GET /users/:id</span>
+  <span class="fn">findOne</span>(<span class="dec">@Param</span>(<span class="str">'id'</span>, <span class="cls">ParseIntPipe</span>) id: <span class="type">number</span>) {
+    <span class="kw">return</span> <span class="kw">this</span>.usersService.<span class="fn">findOne</span>(id);
+  }
+
+  <span class="dec">@Post</span>()                      <span class="cm">// POST /users</span>
+  <span class="dec">@HttpCode</span>(<span class="cls">HttpStatus</span>.CREATED)
+  <span class="fn">create</span>(<span class="dec">@Body</span>(<span class="cls">ValidationPipe</span>) dto: <span class="cls">CreateUserDto</span>) {
+    <span class="kw">return</span> <span class="kw">this</span>.usersService.<span class="fn">create</span>(dto);
+  }
+
+  <span class="dec">@Put</span>(<span class="str">':id'</span>)                  <span class="cm">// PUT /users/:id — Protégé par JWT</span>
+  <span class="dec">@UseGuards</span>(<span class="cls">JwtAuthGuard</span>)
+  <span class="fn">update</span>(<span class="dec">@Param</span>(<span class="str">'id'</span>, <span class="cls">ParseIntPipe</span>) id: <span class="type">number</span>, <span class="dec">@Body</span>() dto: <span class="kw">any</span>) {
+    <span class="kw">return</span> <span class="kw">this</span>.usersService.<span class="fn">update</span>(id, dto);
+  }
+
+  <span class="dec">@Delete</span>(<span class="str">':id'</span>)               <span class="cm">// DELETE /users/:id</span>
+  <span class="dec">@HttpCode</span>(<span class="cls">HttpStatus</span>.NO_CONTENT)
+  <span class="fn">remove</span>(<span class="dec">@Param</span>(<span class="str">'id'</span>, <span class="cls">ParseIntPipe</span>) id: <span class="type">number</span>) {
+    <span class="kw">return</span> <span class="kw">this</span>.usersService.<span class="fn">remove</span>(id);
+  }
+}</pre>
+    </div>
+
+    <h3>DTO avec class-validator</h3>
+    <div class="code-block">
+      <div class="code-header"><div class="code-header-left"><span class="code-dot dot-red"></span><span class="code-dot dot-yellow"></span><span class="code-dot dot-green"></span><span class="code-filename">create-user.dto.ts</span></div><span class="code-lang">TypeScript</span></div>
+      <pre><span class="imp">import</span> { <span class="cls">IsEmail</span>, <span class="cls">IsString</span>, <span class="cls">MinLength</span>, <span class="cls">IsOptional</span>, <span class="cls">IsEnum</span> } <span class="imp">from</span> <span class="str">'class-validator'</span>;
+
+<span class="kw">export class</span> <span class="cls">CreateUserDto</span> {
+  <span class="dec">@IsString</span>()
+  <span class="dec">@MinLength</span>(<span class="num">2</span>)
+  name: <span class="type">string</span>;
+
+  <span class="dec">@IsEmail</span>()
+  email: <span class="type">string</span>;
+
+  <span class="dec">@IsString</span>()
+  <span class="dec">@MinLength</span>(<span class="num">8</span>)
+  password: <span class="type">string</span>;
+
+  <span class="dec">@IsOptional</span>()
+  <span class="dec">@IsEnum</span>([<span class="str">'admin'</span>, <span class="str">'user'</span>])
+  role?: <span class="type">string</span>;
+}</pre>
+    </div>
+  </section>
+
+  <!-- 4. CYCLE DE VIE -->
+  <section class="section" id="lifecycle">
+    <div class="section-header">
+      <span class="section-num">04</span>
+      <h2>Cycle de vie d'une <span style="color:var(--accent)">Requête HTTP</span></h2>
+    </div>
+
+    <p>Lorsqu'une requête HTTP arrive dans NestJS, elle traverse plusieurs couches dans un ordre précis et déterministe. Comprendre ce pipeline est essentiel pour bien placer votre logique.</p>
+
+    <div class="lifecycle">
+      <div class="lc-step"><div class="lc-num">01</div><div class="lc-name">Requête</div><div class="lc-desc">Client HTTP envoie la requête</div></div>
+      <div class="lc-step"><div class="lc-num">02</div><div class="lc-name">Middleware</div><div class="lc-desc">Traitement avant routing (logs, CORS...)</div></div>
+      <div class="lc-step"><div class="lc-num">03</div><div class="lc-name">Guard</div><div class="lc-desc">Autorisation &amp; authentification</div></div>
+      <div class="lc-step"><div class="lc-num">04</div><div class="lc-name">Interceptor</div><div class="lc-desc">Logique pré-traitement (cache, metrics)</div></div>
+      <div class="lc-step"><div class="lc-num">05</div><div class="lc-name">Pipe</div><div class="lc-desc">Validation &amp; transformation des inputs</div></div>
+      <div class="lc-step"><div class="lc-num">06</div><div class="lc-name">Controller</div><div class="lc-desc">Handler de route appelé</div></div>
+      <div class="lc-step"><div class="lc-num">07</div><div class="lc-name">Service</div><div class="lc-desc">Logique métier exécutée</div></div>
+      <div class="lc-step"><div class="lc-num">08</div><div class="lc-name">Interceptor</div><div class="lc-desc">Post-traitement de la réponse</div></div>
+      <div class="lc-step"><div class="lc-num">09</div><div class="lc-name">Exception Filter</div><div class="lc-desc">Gestion des erreurs si exception</div></div>
+      <div class="lc-step"><div class="lc-num">10</div><div class="lc-name">Réponse</div><div class="lc-desc">JSON envoyé au client</div></div>
+    </div>
+
+    <h3>Détail de chaque étape</h3>
+    <table>
+      <tr><th>#</th><th>Composant</th><th>Rôle</th><th>Scope possible</th></tr>
+      <tr><td><span class="badge badge-red">01</span></td><td><strong>Middleware</strong></td><td>Accès à req/res avant routing, next() obligatoire</td><td>Global / Module / Route</td></tr>
+      <tr><td><span class="badge badge-red">02</span></td><td><strong>Guard</strong></td><td>Retourne true/false, bloque si non autorisé → 403</td><td>Global / Controller / Route</td></tr>
+      <tr><td><span class="badge badge-blue">03</span></td><td><strong>Interceptor (pre)</strong></td><td>Logique avant handler : timing, logging, transformation req</td><td>Global / Controller / Route</td></tr>
+      <tr><td><span class="badge badge-green">04</span></td><td><strong>Pipe</strong></td><td>Valide et transforme les arguments du handler</td><td>Global / Controller / Route / Param</td></tr>
+      <tr><td><span class="badge badge-green">05</span></td><td><strong>Controller Handler</strong></td><td>Méthode du controller appelée, délègue au service</td><td>Route</td></tr>
+      <tr><td><span class="badge badge-blue">06</span></td><td><strong>Interceptor (post)</strong></td><td>Transforme la réponse, mise en cache, log de performance</td><td>Global / Controller / Route</td></tr>
+      <tr><td><span class="badge badge-red">07</span></td><td><strong>Exception Filter</strong></td><td>Capture les exceptions non gérées, formate la réponse d'erreur</td><td>Global / Controller / Route</td></tr>
+    </table>
+
+    <div class="callout warning">
+      <div class="callout-label">⚠️ Ordre d'exécution</div>
+      <p>L'ordre est toujours : <strong>Global → Controller → Route</strong>. Les éléments globaux sont enregistrés via <code>app.useGlobalGuards()</code>, <code>app.useGlobalPipes()</code> etc. dans le <code>main.ts</code>.</p>
+    </div>
+
+    <h3>Exemple : Exception Filter personnalisé</h3>
+    <div class="code-block">
+      <div class="code-header"><div class="code-header-left"><span class="code-dot dot-red"></span><span class="code-dot dot-yellow"></span><span class="code-dot dot-green"></span><span class="code-filename">http-exception.filter.ts</span></div><span class="code-lang">TypeScript</span></div>
+      <pre><span class="imp">import</span> { <span class="cls">ExceptionFilter</span>, <span class="cls">Catch</span>, <span class="cls">ArgumentsHost</span>, <span class="cls">HttpException</span> } <span class="imp">from</span> <span class="str">'@nestjs/common'</span>;
+
+<span class="dec">@Catch</span>(<span class="cls">HttpException</span>)
+<span class="kw">export class</span> <span class="cls">HttpExceptionFilter</span> <span class="kw">implements</span> <span class="cls">ExceptionFilter</span> {
+  <span class="fn">catch</span>(exception: <span class="cls">HttpException</span>, host: <span class="cls">ArgumentsHost</span>) {
+    <span class="kw">const</span> ctx = host.<span class="fn">switchToHttp</span>();
+    <span class="kw">const</span> response = ctx.<span class="fn">getResponse</span>();
+    <span class="kw">const</span> status = exception.<span class="fn">getStatus</span>();
+
+    response.<span class="fn">status</span>(status).<span class="fn">json</span>({
+      <span class="prop">statusCode</span>: status,
+      <span class="prop">timestamp</span>: <span class="kw">new</span> <span class="cls">Date</span>().<span class="fn">toISOString</span>(),
+      <span class="prop">message</span>: exception.<span class="fn">message</span>,
+    });
+  }
+}</pre>
+    </div>
+  </section>
+
+  <!-- 5. TYPEORM -->
+  <section class="section" id="typeorm">
+    <div class="section-header">
+      <span class="section-num">05</span>
+      <h2>Qu'est-ce que <span style="color:var(--orm)">TypeORM</span> ?</h2>
+    </div>
+
+    <p><strong>TypeORM</strong> est un ORM (Object-Relational Mapper) open-source pour TypeScript et JavaScript, inspiré de Hibernate (Java), Doctrine (PHP) et Entity Framework (.NET). Il fait le pont entre vos classes TypeScript et vos tables SQL.</p>
+
+    <h3>Quel problème résout un ORM ?</h3>
+
+    <div class="callout info">
+      <div class="callout-label">🤔 Le problème : l'impedance mismatch</div>
+      <p>Les bases de données relationnelles stockent des données en <strong>tables avec des lignes et colonnes</strong>. Les applications orientées objet travaillent avec des <strong>objets, classes et relations</strong>. Cet écart fondamental s'appelle "impedance mismatch". L'ORM résout ce problème en servant de couche de traduction automatique.</p>
+    </div>
+
+    <div class="two-col">
+      <div class="code-block" style="margin:0">
+        <div class="code-header"><div class="code-header-left"><span class="code-dot dot-red"></span><span class="code-filename">Sans ORM — SQL brut</span></div></div>
+        <pre style="font-size:0.72rem"><span class="cm">// ❌ Problèmes : SQL brut, mapping</span>
+<span class="cm">// manuel, pas de typage, injection SQL</span>
+<span class="kw">const</span> result = <span class="kw">await</span> db.<span class="fn">query</span>(
+  <span class="str">`SELECT u.*, p.title FROM users u
+   LEFT JOIN posts p ON p.author_id = u.id
+   WHERE u.id = ? AND u.active = 1`</span>,
+  [userId]
+);
+
+<span class="cm">// Mapping manuel fastidieux...</span>
+<span class="kw">const</span> user = {
+  id: result[<span class="num">0</span>].id,
+  name: result[<span class="num">0</span>].name,
+  posts: result.<span class="fn">map</span>(r => ({ title: r.title }))
+};</pre>
+      </div>
+      <div class="code-block" style="margin:0">
+        <div class="code-header"><div class="code-header-left"><span class="code-dot dot-green"></span><span class="code-filename">Avec TypeORM</span></div></div>
+        <pre style="font-size:0.72rem"><span class="cm">// ✅ Élégant : typé, lisible, sécurisé</span>
+
+<span class="kw">const</span> user = <span class="kw">await</span> <span class="kw">this</span>.userRepo.<span class="fn">findOne</span>({
+  <span class="prop">where</span>: { id: userId, isActive: <span class="kw">true</span> },
+  <span class="prop">relations</span>: [<span class="str">'posts'</span>],
+});
+
+<span class="cm">// ✓ Résultat typé en User automatiquement</span>
+<span class="cm">// ✓ Pas d'injection SQL possible</span>
+<span class="cm">// ✓ Code réutilisable et testable</span>
+<span class="cm">// ✓ Relations chargées proprement</span></pre>
+      </div>
+    </div>
+
+    <h3>Pourquoi utiliser un ORM ?</h3>
+    <div class="card-grid">
+      <div class="card"><div class="card-icon">🔒</div><h4>Sécurité contre l'injection SQL</h4><p>Protection automatique via les requêtes paramétrées. Fini les concaténations de chaînes dangereuses dans les requêtes SQL.</p></div>
+      <div class="card"><div class="card-icon">⚡</div><h4>Productivité accrue</h4><p>CRUD automatique, migrations gérées, relations déclarées en TypeScript. Moins de code boilerplate, plus de valeur ajoutée.</p></div>
+      <div class="card"><div class="card-icon">🔷</div><h4>Typage TypeScript fort</h4><p>Entités = classes TypeScript typées. L'IDE fournit l'autocomplétion et détecte les erreurs de propriétés à la compilation.</p></div>
+      <div class="card"><div class="card-icon">🗄️</div><h4>Portabilité multi-SGBD</h4><p>Changez de base (MySQL → PostgreSQL) avec un minimum de modifications. TypeORM s'adapte automatiquement à la syntaxe SQL.</p></div>
+      <div class="card"><div class="card-icon">📦</div><h4>Migrations versionnées</h4><p>Versionnez les changements de schéma. Synchronisez les environnements de façon reproductible et sûre en production.</p></div>
+      <div class="card"><div class="card-icon">🔗</div><h4>Relations simplifiées</h4><p>OneToOne, OneToMany, ManyToMany déclarés proprement avec lazy/eager loading. Fini les JOINs SQL complexes écrits à la main.</p></div>
+    </div>
+
+    <h3>Bases de données supportées</h3>
+    <p>TypeORM supporte : <strong>MySQL</strong>, <strong>PostgreSQL</strong>, <strong>SQLite</strong>, <strong>MariaDB</strong>, <strong>Oracle</strong>, <strong>MS SQL Server</strong>, <strong>MongoDB</strong> (expérimental), CockroachDB, et SAP Hana.</p>
+
+    <h3>Les Entités TypeORM</h3>
+    <p>Une entité est une classe TypeScript décorée <code>@Entity()</code> correspondant à une table SQL. Chaque propriété décorée correspond à une colonne.</p>
+
+    <div class="code-block">
+      <div class="code-header"><div class="code-header-left"><span class="code-dot dot-red"></span><span class="code-dot dot-yellow"></span><span class="code-dot dot-green"></span><span class="code-filename">user.entity.ts</span></div><span class="code-lang">TypeScript</span></div>
+      <pre><span class="imp">import</span> { <span class="cls">Entity</span>, <span class="cls">PrimaryGeneratedColumn</span>, <span class="cls">Column</span>,
+         <span class="cls">CreateDateColumn</span>, <span class="cls">UpdateDateColumn</span>, <span class="cls">OneToMany</span> } <span class="imp">from</span> <span class="str">'typeorm'</span>;
+<span class="imp">import</span> { <span class="cls">Post</span> } <span class="imp">from</span> <span class="str">'../posts/entities/post.entity'</span>;
+
+<span class="dec">@Entity</span>(<span class="str">'users'</span>)                       <span class="cm">// Nom de la table SQL</span>
+<span class="kw">export class</span> <span class="cls">User</span> {
+
+  <span class="dec">@PrimaryGeneratedColumn</span>()            <span class="cm">// INT AUTO_INCREMENT</span>
+  id: <span class="type">number</span>;
+
+  <span class="dec">@Column</span>({ length: <span class="num">100</span> })
+  name: <span class="type">string</span>;
+
+  <span class="dec">@Column</span>({ unique: <span class="kw">true</span> })
+  email: <span class="type">string</span>;
+
+  <span class="dec">@Column</span>({ select: <span class="kw">false</span> })           <span class="cm">// Exclue des SELECT par défaut</span>
+  password: <span class="type">string</span>;
+
+  <span class="dec">@Column</span>({ <span class="prop">default</span>: <span class="kw">true</span> })
+  isActive: <span class="type">boolean</span>;
+
+  <span class="dec">@Column</span>({ <span class="prop">type</span>: <span class="str">'enum'</span>, <span class="prop">enum</span>: [<span class="str">'admin'</span>, <span class="str">'user'</span>], <span class="prop">default</span>: <span class="str">'user'</span> })
+  role: <span class="type">string</span>;
+
+  <span class="dec">@OneToMany</span>(() =&gt; <span class="cls">Post</span>, post =&gt; post.author)
+  posts: <span class="cls">Post</span>[];                        <span class="cm">// Relation : un user a plusieurs posts</span>
+
+  <span class="dec">@CreateDateColumn</span>()                  <span class="cm">// Rempli auto à la création</span>
+  createdAt: <span class="cls">Date</span>;
+
+  <span class="dec">@UpdateDateColumn</span>()                  <span class="cm">// Mis à jour automatiquement</span>
+  updatedAt: <span class="cls">Date</span>;
+}</pre>
+    </div>
+
+    <h3>Les Relations TypeORM</h3>
+    <table>
+      <tr><th>Relation</th><th>Décorateurs</th><th>Exemple concret</th><th>SQL généré</th></tr>
+      <tr><td>Un à un</td><td><code>@OneToOne</code></td><td>User ↔ Profile</td><td>Foreign key unique sur une table</td></tr>
+      <tr><td>Un à plusieurs</td><td><code>@OneToMany</code> / <code>@ManyToOne</code></td><td>User → Posts</td><td>Foreign key sur la table "Many"</td></tr>
+      <tr><td>Plusieurs à plusieurs</td><td><code>@ManyToMany</code> + <code>@JoinTable</code></td><td>Users ↔ Roles</td><td>Table de jointure intermédiaire</td></tr>
+    </table>
+
+    <h3>Le QueryBuilder pour les requêtes complexes</h3>
+    <div class="code-block">
+      <div class="code-header"><div class="code-header-left"><span class="code-dot dot-red"></span><span class="code-dot dot-yellow"></span><span class="code-dot dot-green"></span><span class="code-filename">users.service.ts</span></div><span class="code-lang">TypeScript</span></div>
+      <pre><span class="cm">// Requête complexe avec jointures, conditions et pagination</span>
+<span class="kw">const</span> [users, total] = <span class="kw">await</span> <span class="kw">this</span>.userRepo
+  .<span class="fn">createQueryBuilder</span>(<span class="str">'user'</span>)
+  .<span class="fn">leftJoinAndSelect</span>(<span class="str">'user.posts'</span>, <span class="str">'post'</span>)
+  .<span class="fn">where</span>(<span class="str">'user.isActive = :active'</span>, { active: <span class="kw">true</span> })
+  .<span class="fn">andWhere</span>(<span class="str">'user.role = :role'</span>, { role: <span class="str">'admin'</span> })
+  .<span class="fn">andWhere</span>(<span class="str">'post.published = :pub'</span>, { pub: <span class="kw">true</span> })
+  .<span class="fn">orderBy</span>(<span class="str">'user.createdAt'</span>, <span class="str">'DESC'</span>)
+  .<span class="fn">take</span>(<span class="num">10</span>)                          <span class="cm">// LIMIT</span>
+  .<span class="fn">skip</span>(<span class="num">0</span>)                           <span class="cm">// OFFSET</span>
+  .<span class="fn">getManyAndCount</span>();                 <span class="cm">// Retourne [data, total]</span></pre>
+    </div>
+  </section>
+
+  <!-- 6. PROJET COMPLET -->
+  <section class="section" id="projet">
+    <div class="section-header">
+      <span class="section-num">06</span>
+      <h2>Projet Complet : <span style="color:var(--green)">API Blog</span> avec MySQL</h2>
+    </div>
+
+    <p>Construction d'une <strong>API REST de gestion d'articles de blog</strong> : gestion des utilisateurs, authentification JWT, gestion des articles avec relations.</p>
+
+    <h3>Structure du projet</h3>
+    <div class="file-tree">
+      <span class="ft-dir">src/</span><br>
+      &nbsp;&nbsp;<span class="ft-dir">├── auth/</span><br>
+      &nbsp;&nbsp;&nbsp;&nbsp;<span class="ft-file ft-module">│&nbsp;&nbsp; ├── auth.module.ts</span><br>
+      &nbsp;&nbsp;&nbsp;&nbsp;<span class="ft-file ft-service">│&nbsp;&nbsp; ├── auth.service.ts</span><br>
+      &nbsp;&nbsp;&nbsp;&nbsp;<span class="ft-file">│&nbsp;&nbsp; └── jwt.strategy.ts</span><br>
+      &nbsp;&nbsp;<span class="ft-dir">├── users/</span><br>
+      &nbsp;&nbsp;&nbsp;&nbsp;<span class="ft-file ft-module">│&nbsp;&nbsp; ├── users.module.ts</span><br>
+      &nbsp;&nbsp;&nbsp;&nbsp;<span class="ft-file ft-controller">│&nbsp;&nbsp; ├── users.controller.ts</span><br>
+      &nbsp;&nbsp;&nbsp;&nbsp;<span class="ft-file ft-service">│&nbsp;&nbsp; ├── users.service.ts</span><br>
+      &nbsp;&nbsp;&nbsp;&nbsp;<span class="ft-file ft-entity">│&nbsp;&nbsp; ├── entities/user.entity.ts</span><br>
+      &nbsp;&nbsp;&nbsp;&nbsp;<span class="ft-file ft-dto">│&nbsp;&nbsp; └── dto/create-user.dto.ts</span><br>
+      &nbsp;&nbsp;<span class="ft-dir">├── posts/</span><br>
+      &nbsp;&nbsp;&nbsp;&nbsp;<span class="ft-file ft-module">│&nbsp;&nbsp; ├── posts.module.ts</span><br>
+      &nbsp;&nbsp;&nbsp;&nbsp;<span class="ft-file ft-controller">│&nbsp;&nbsp; ├── posts.controller.ts</span><br>
+      &nbsp;&nbsp;&nbsp;&nbsp;<span class="ft-file ft-service">│&nbsp;&nbsp; ├── posts.service.ts</span><br>
+      &nbsp;&nbsp;&nbsp;&nbsp;<span class="ft-file ft-entity">│&nbsp;&nbsp; └── entities/post.entity.ts</span><br>
+      &nbsp;&nbsp;<span class="ft-file ft-module">├── app.module.ts</span><br>
+      &nbsp;&nbsp;<span class="ft-file ft-config">└── main.ts</span>
+    </div>
+
+    <h3>Étape 1 — Installation</h3>
+    <div class="code-block">
+      <div class="code-header"><div class="code-header-left"><span class="code-dot dot-red"></span><span class="code-dot dot-yellow"></span><span class="code-dot dot-green"></span><span class="code-filename">terminal</span></div><span class="code-lang">bash</span></div>
+      <pre><span class="cm"># Créer le projet</span>
+<span class="fn">nest</span> new blog-api && <span class="fn">cd</span> blog-api
+
+<span class="cm"># TypeORM + MySQL driver</span>
+<span class="fn">npm</span> install @nestjs/typeorm typeorm mysql2
+
+<span class="cm"># Authentification JWT</span>
+<span class="fn">npm</span> install @nestjs/jwt @nestjs/passport passport passport-jwt
+<span class="fn">npm</span> install -D @types/passport-jwt
+
+<span class="cm"># Validation des DTOs</span>
+<span class="fn">npm</span> install class-validator class-transformer
+
+<span class="cm"># Variables d'environnement</span>
+<span class="fn">npm</span> install @nestjs/config</pre>
+    </div>
+
+    <h3>Étape 2 — Fichier .env</h3>
+    <div class="code-block">
+      <div class="code-header"><div class="code-header-left"><span class="code-dot dot-red"></span><span class="code-dot dot-yellow"></span><span class="code-dot dot-green"></span><span class="code-filename">.env</span></div><span class="code-lang">env</span></div>
+      <pre><span class="prop">DB_HOST</span>=<span class="str">localhost</span>
+<span class="prop">DB_PORT</span>=<span class="num">3306</span>
+<span class="prop">DB_USER</span>=<span class="str">root</span>
+<span class="prop">DB_PASS</span>=<span class="str">secret</span>
+<span class="prop">DB_NAME</span>=<span class="str">blog_db</span>
+<span class="prop">JWT_SECRET</span>=<span class="str">mon_secret_jwt_super_secure_64chars</span>
+<span class="prop">JWT_EXPIRES_IN</span>=<span class="str">7d</span></pre>
+    </div>
+
+    <h3>Étape 3 — AppModule avec TypeORM</h3>
+    <div class="code-block">
+      <div class="code-header"><div class="code-header-left"><span class="code-dot dot-red"></span><span class="code-dot dot-yellow"></span><span class="code-dot dot-green"></span><span class="code-filename">app.module.ts</span></div><span class="code-lang">TypeScript</span></div>
+      <pre><span class="imp">import</span> { <span class="cls">Module</span> } <span class="imp">from</span> <span class="str">'@nestjs/common'</span>;
+<span class="imp">import</span> { <span class="cls">ConfigModule</span>, <span class="cls">ConfigService</span> } <span class="imp">from</span> <span class="str">'@nestjs/config'</span>;
+<span class="imp">import</span> { <span class="cls">TypeOrmModule</span> } <span class="imp">from</span> <span class="str">'@nestjs/typeorm'</span>;
+<span class="imp">import</span> { <span class="cls">UsersModule</span> } <span class="imp">from</span> <span class="str">'./users/users.module'</span>;
+<span class="imp">import</span> { <span class="cls">PostsModule</span> } <span class="imp">from</span> <span class="str">'./posts/posts.module'</span>;
+<span class="imp">import</span> { <span class="cls">AuthModule</span> } <span class="imp">from</span> <span class="str">'./auth/auth.module'</span>;
+
+<span class="dec">@Module</span>({
+  <span class="prop">imports</span>: [
+    <span class="cls">ConfigModule</span>.<span class="fn">forRoot</span>({ isGlobal: <span class="kw">true</span> }),
+
+    <span class="cls">TypeOrmModule</span>.<span class="fn">forRootAsync</span>({
+      <span class="prop">imports</span>: [<span class="cls">ConfigModule</span>],
+      <span class="prop">useFactory</span>: (config: <span class="cls">ConfigService</span>) =&gt; ({
+        <span class="prop">type</span>: <span class="str">'mysql'</span>,
+        <span class="prop">host</span>: config.<span class="fn">get</span>(<span class="str">'DB_HOST'</span>),
+        <span class="prop">port</span>: config.<span class="fn">get</span>&lt;<span class="type">number</span>&gt;(<span class="str">'DB_PORT'</span>),
+        <span class="prop">username</span>: config.<span class="fn">get</span>(<span class="str">'DB_USER'</span>),
+        <span class="prop">password</span>: config.<span class="fn">get</span>(<span class="str">'DB_PASS'</span>),
+        <span class="prop">database</span>: config.<span class="fn">get</span>(<span class="str">'DB_NAME'</span>),
+        <span class="prop">entities</span>: [<span class="fn">__dirname</span> + <span class="str">'/**/*.entity{.ts,.js}'</span>],
+        <span class="prop">synchronize</span>: <span class="kw">true</span>,   <span class="cm">// ⚠️ DEV uniquement !</span>
+        <span class="prop">logging</span>: <span class="kw">true</span>,
+      }),
+      <span class="prop">inject</span>: [<span class="cls">ConfigService</span>],
+    }),
+
+    <span class="cls">UsersModule</span>, <span class="cls">PostsModule</span>, <span class="cls">AuthModule</span>,
+  ],
+})
+<span class="kw">export class</span> <span class="cls">AppModule</span> {}</pre>
+    </div>
+
+    <h3>Étape 4 — Entité Post avec relation</h3>
+    <div class="code-block">
+      <div class="code-header"><div class="code-header-left"><span class="code-dot dot-red"></span><span class="code-dot dot-yellow"></span><span class="code-dot dot-green"></span><span class="code-filename">post.entity.ts</span></div><span class="code-lang">TypeScript</span></div>
+      <pre><span class="imp">import</span> { <span class="cls">Entity</span>, <span class="cls">PrimaryGeneratedColumn</span>, <span class="cls">Column</span>,
+         <span class="cls">ManyToOne</span>, <span class="cls">CreateDateColumn</span>, <span class="cls">JoinColumn</span> } <span class="imp">from</span> <span class="str">'typeorm'</span>;
+<span class="imp">import</span> { <span class="cls">User</span> } <span class="imp">from</span> <span class="str">'../../users/entities/user.entity'</span>;
+
+<span class="dec">@Entity</span>(<span class="str">'posts'</span>)
+<span class="kw">export class</span> <span class="cls">Post</span> {
+
+  <span class="dec">@PrimaryGeneratedColumn</span>()
+  id: <span class="type">number</span>;
+
+  <span class="dec">@Column</span>({ length: <span class="num">255</span> })
+  title: <span class="type">string</span>;
+
+  <span class="dec">@Column</span>({ <span class="prop">type</span>: <span class="str">'text'</span> })
+  content: <span class="type">string</span>;
+
+  <span class="dec">@Column</span>({ <span class="prop">default</span>: <span class="kw">false</span> })
+  published: <span class="type">boolean</span>;
+
+  <span class="cm">// Plusieurs posts appartiennent à un auteur (User)</span>
+  <span class="dec">@ManyToOne</span>(() =&gt; <span class="cls">User</span>, user =&gt; user.posts, { eager: <span class="kw">true</span> })
+  <span class="dec">@JoinColumn</span>({ name: <span class="str">'author_id'</span> })
+  author: <span class="cls">User</span>;
+
+  <span class="dec">@CreateDateColumn</span>()
+  createdAt: <span class="cls">Date</span>;
+}</pre>
+    </div>
+
+    <h3>Étape 5 — Posts Module, Service & Controller</h3>
+    <div class="code-block">
+      <div class="code-header"><div class="code-header-left"><span class="code-dot dot-red"></span><span class="code-dot dot-yellow"></span><span class="code-dot dot-green"></span><span class="code-filename">posts.module.ts</span></div><span class="code-lang">TypeScript</span></div>
+      <pre><span class="imp">import</span> { <span class="cls">Module</span> } <span class="imp">from</span> <span class="str">'@nestjs/common'</span>;
+<span class="imp">import</span> { <span class="cls">TypeOrmModule</span> } <span class="imp">from</span> <span class="str">'@nestjs/typeorm'</span>;
+<span class="imp">import</span> { <span class="cls">Post</span> } <span class="imp">from</span> <span class="str">'./entities/post.entity'</span>;
+<span class="imp">import</span> { <span class="cls">PostsService</span> } <span class="imp">from</span> <span class="str">'./posts.service'</span>;
+<span class="imp">import</span> { <span class="cls">PostsController</span> } <span class="imp">from</span> <span class="str">'./posts.controller'</span>;
+
+<span class="dec">@Module</span>({
+  <span class="prop">imports</span>: [<span class="cls">TypeOrmModule</span>.<span class="fn">forFeature</span>([<span class="cls">Post</span>])], <span class="cm">// Injecte Repository&lt;Post&gt;</span>
+  <span class="prop">controllers</span>: [<span class="cls">PostsController</span>],
+  <span class="prop">providers</span>: [<span class="cls">PostsService</span>],
+  <span class="prop">exports</span>: [<span class="cls">PostsService</span>],
+})
+<span class="kw">export class</span> <span class="cls">PostsModule</span> {}</pre>
+    </div>
+
+    <div class="code-block">
+      <div class="code-header"><div class="code-header-left"><span class="code-dot dot-red"></span><span class="code-dot dot-yellow"></span><span class="code-dot dot-green"></span><span class="code-filename">posts.service.ts</span></div><span class="code-lang">TypeScript</span></div>
+      <pre><span class="imp">import</span> { <span class="cls">Injectable</span>, <span class="cls">NotFoundException</span> } <span class="imp">from</span> <span class="str">'@nestjs/common'</span>;
+<span class="imp">import</span> { <span class="cls">InjectRepository</span> } <span class="imp">from</span> <span class="str">'@nestjs/typeorm'</span>;
+<span class="imp">import</span> { <span class="cls">Repository</span> } <span class="imp">from</span> <span class="str">'typeorm'</span>;
+<span class="imp">import</span> { <span class="cls">Post</span> } <span class="imp">from</span> <span class="str">'./entities/post.entity'</span>;
+
+<span class="dec">@Injectable</span>()
+<span class="kw">export class</span> <span class="cls">PostsService</span> {
+  <span class="kw">constructor</span>(
+    <span class="dec">@InjectRepository</span>(<span class="cls">Post</span>)
+    <span class="kw">private readonly</span> postsRepo: <span class="cls">Repository</span>&lt;<span class="cls">Post</span>&gt;,
+  ) {}
+
+  <span class="fn">findAll</span>(page = <span class="num">1</span>, limit = <span class="num">10</span>) {
+    <span class="kw">return</span> <span class="kw">this</span>.postsRepo.<span class="fn">findAndCount</span>({
+      <span class="prop">where</span>: { published: <span class="kw">true</span> },
+      <span class="prop">order</span>: { createdAt: <span class="str">'DESC'</span> },
+      <span class="prop">take</span>: limit,
+      <span class="prop">skip</span>: (page - <span class="num">1</span>) * limit,
+    });
+  }
+
+  <span class="kw">async</span> <span class="fn">findOne</span>(id: <span class="type">number</span>) {
+    <span class="kw">const</span> post = <span class="kw">await</span> <span class="kw">this</span>.postsRepo.<span class="fn">findOneBy</span>({ id });
+    <span class="kw">if</span> (!post) <span class="kw">throw new</span> <span class="cls">NotFoundException</span>(<span class="str">`Post #<span class="op">${</span>id<span class="op">}</span> introuvable`</span>);
+    <span class="kw">return</span> post;
+  }
+
+  <span class="kw">async</span> <span class="fn">create</span>(dto: <span class="cls">Partial</span>&lt;<span class="cls">Post</span>&gt;, authorId: <span class="type">number</span>) {
+    <span class="kw">const</span> post = <span class="kw">this</span>.postsRepo.<span class="fn">create</span>({ ...dto, <span class="prop">author</span>: { id: authorId } });
+    <span class="kw">return</span> <span class="kw">await</span> <span class="kw">this</span>.postsRepo.<span class="fn">save</span>(post);
+  }
+
+  <span class="kw">async</span> <span class="fn">update</span>(id: <span class="type">number</span>, dto: <span class="cls">Partial</span>&lt;<span class="cls">Post</span>&gt;) {
+    <span class="kw">await</span> <span class="kw">this</span>.<span class="fn">findOne</span>(id);
+    <span class="kw">await</span> <span class="kw">this</span>.postsRepo.<span class="fn">update</span>(id, dto);
+    <span class="kw">return</span> <span class="kw">this</span>.<span class="fn">findOne</span>(id);
+  }
+
+  <span class="kw">async</span> <span class="fn">remove</span>(id: <span class="type">number</span>) {
+    <span class="kw">await</span> <span class="kw">this</span>.<span class="fn">findOne</span>(id);
+    <span class="kw">await</span> <span class="kw">this</span>.postsRepo.<span class="fn">delete</span>(id);
+    <span class="kw">return</span> { message: <span class="str">`Post #<span class="op">${</span>id<span class="op">}</span> supprimé`</span> };
+  }
+}</pre>
+    </div>
+
+    <h3>Étape 6 — main.ts (point d'entrée)</h3>
+    <div class="code-block">
+      <div class="code-header"><div class="code-header-left"><span class="code-dot dot-red"></span><span class="code-dot dot-yellow"></span><span class="code-dot dot-green"></span><span class="code-filename">main.ts</span></div><span class="code-lang">TypeScript</span></div>
+      <pre><span class="imp">import</span> { <span class="cls">NestFactory</span> } <span class="imp">from</span> <span class="str">'@nestjs/core'</span>;
+<span class="imp">import</span> { <span class="cls">ValidationPipe</span> } <span class="imp">from</span> <span class="str">'@nestjs/common'</span>;
+<span class="imp">import</span> { <span class="cls">AppModule</span> } <span class="imp">from</span> <span class="str">'./app.module'</span>;
+
+<span class="kw">async function</span> <span class="fn">bootstrap</span>() {
+  <span class="kw">const</span> app = <span class="kw">await</span> <span class="cls">NestFactory</span>.<span class="fn">create</span>(<span class="cls">AppModule</span>);
+
+  <span class="cm">// Validation globale avec class-validator</span>
+  app.<span class="fn">useGlobalPipes</span>(<span class="kw">new</span> <span class="cls">ValidationPipe</span>({
+    <span class="prop">whitelist</span>: <span class="kw">true</span>,             <span class="cm">// Supprime les props non décorées</span>
+    <span class="prop">forbidNonWhitelisted</span>: <span class="kw">true</span>, <span class="cm">// Erreur si prop inconnue</span>
+    <span class="prop">transform</span>: <span class="kw">true</span>,             <span class="cm">// Auto-transformation des types</span>
+  }));
+
+  app.<span class="fn">setGlobalPrefix</span>(<span class="str">'api/v1'</span>);  <span class="cm">// Préfixe global</span>
+  app.<span class="fn">enableCors</span>({ <span class="prop">origin</span>: <span class="str">'http://localhost:3000'</span> });
+
+  <span class="kw">await</span> app.<span class="fn">listen</span>(<span class="num">3001</span>);
+  console.<span class="fn">log</span>(<span class="str">'🚀 API running on http://localhost:3001/api/v1'</span>);
+}
+<span class="fn">bootstrap</span>();</pre>
+    </div>
+
+    <h3>Récapitulatif des endpoints</h3>
+    <table>
+      <tr><th>Méthode</th><th>URL</th><th>Description</th><th>Auth requise</th></tr>
+      <tr><td><span class="badge badge-green">POST</span></td><td><code>/api/v1/auth/login</code></td><td>Connexion → retourne JWT</td><td>Non</td></tr>
+      <tr><td><span class="badge badge-green">POST</span></td><td><code>/api/v1/users</code></td><td>Créer un utilisateur</td><td>Non</td></tr>
+      <tr><td><span class="badge badge-blue">GET</span></td><td><code>/api/v1/users</code></td><td>Liste des utilisateurs</td><td>JWT</td></tr>
+      <tr><td><span class="badge badge-blue">GET</span></td><td><code>/api/v1/users/:id</code></td><td>Détail d'un utilisateur</td><td>JWT</td></tr>
+      <tr><td><span class="badge badge-blue">GET</span></td><td><code>/api/v1/posts</code></td><td>Articles publiés (paginés)</td><td>Non</td></tr>
+      <tr><td><span class="badge badge-green">POST</span></td><td><code>/api/v1/posts</code></td><td>Créer un article</td><td>JWT</td></tr>
+      <tr><td><span class="badge badge-blue">GET</span></td><td><code>/api/v1/posts/:id</code></td><td>Détail d'un article</td><td>Non</td></tr>
+      <tr><td><span class="badge badge-red">PUT</span></td><td><code>/api/v1/posts/:id</code></td><td>Modifier un article</td><td>JWT</td></tr>
+      <tr><td><span class="badge badge-red">DELETE</span></td><td><code>/api/v1/posts/:id</code></td><td>Supprimer un article</td><td>JWT + Admin</td></tr>
+    </table>
+
+    <div class="callout warning">
+      <div class="callout-label">⚠️ Production — Migrations obligatoires</div>
+      <p>En production, désactivez <code>synchronize: true</code> et utilisez des <strong>migrations TypeORM</strong>. La synchronisation automatique peut altérer ou supprimer des données. Commande : <code>npm run typeorm migration:run</code>.</p>
+    </div>
+
+    <div class="callout tip">
+      <div class="callout-label">🚀 Prochaines étapes</div>
+      <p>Pour aller plus loin : <strong>Swagger/OpenAPI</strong> avec <code>@nestjs/swagger</code> pour documenter l'API — <strong>Redis</strong> pour le cache avec <code>@nestjs/cache-manager</code> — <strong>Tests unitaires</strong> avec Jest et <code>@nestjs/testing</code> — <strong>Docker Compose</strong> pour containeriser NestJS + MySQL.</p>
+    </div>
+
+  </section>
+
+</main>
+
+<script>
+  window.addEventListener('scroll', () => {
+    const doc = document.documentElement;
+    const progress = (doc.scrollTop / (doc.scrollHeight - doc.clientHeight)) * 100;
+    document.getElementById('progress').style.width = progress + '%';
+  });
+
+  const sections = document.querySelectorAll('section[id]');
+  const navItems = document.querySelectorAll('.nav-item');
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        navItems.forEach(i => i.classList.remove('active'));
+        const active = document.querySelector(`.nav-item[href="#${entry.target.id}"]`);
+        if (active) active.classList.add('active');
+      }
+    });
+  }, { threshold: 0.25 });
+  sections.forEach(s => observer.observe(s));
+</script>
+</body>
+</html>
