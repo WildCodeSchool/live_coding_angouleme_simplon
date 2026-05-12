@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Monolithique vs Microservices</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <div class="presentation">
+        <!-- Slide 1: Titre -->
+        <div class="slide title-slide">
+            <h1>Monolithique vs Microservices</h1>
+        </div>
+
+        <!-- Slide 2: Définitions -->
+        <div class="slide">
+            <h2>1. Définitions des Architectures</h2>
+
+            <div class="definition-box">
+                <h3>🏢 Architecture Monolithique</h3>
+                <p>Une application développée et déployée comme une seule unité. Tous les composants (interface
+                    utilisateur, logique métier, accès aux données) sont étroitement couplés dans un seul processus
+                    exécutable.</p>
+            </div>
+
+            <div class="definition-box">
+                <h3>🧩 Architecture Microservices</h3>
+                <p>Une approche qui structure une application comme un ensemble de services faiblement couplés,
+                    développés, déployés et maintenus de manière indépendante. Chaque service a sa propre responsabilité
+                    métier.</p>
+            </div>
+        </div>
+
+        <!-- Slide 3: Exemples avec React, NestJS, MySQL -->
+        <div class="slide">
+            <h2>2. Exemples d'Architecture</h2>
+
+            <h3>🏢 Architecture Monolithique</h3>
+
+            <div class="shema">
+                <div class="header">APPLICATION UNIQUE</div>
+
+                <div class="section">
+                    <h3>Frontend (React)</h3>
+                    <ul>
+                        <li>Components</li>
+                        <li>Pages</li>
+                        <li>State Management</li>
+                    </ul>
+                </div>
+
+                <div class="section">
+                    <h3>Backend (NestJS)</h3>
+                    <ul>
+                        <li>Controllers</li>
+                        <li>Services</li>
+                        <li>Modules</li>
+                        <li>Guards/Middlewares</li>
+                    </ul>
+                </div>
+
+                <div class="section">
+                    <h3>Base de données (MySQL)</h3>
+                    <ul>
+                        <li>Toutes les tables</li>
+                    </ul>
+                </div>
+
+            </div>
+
+            <h3>🧩 Architecture Microservices</h3>
+            <div class="schema">
+
+                <!-- Services -->
+                <div class="services">
+                    <div class="box-micro">
+                        <div><strong>Service User</strong></div>
+                        <div>NestJS API</div>
+                        <div>MySQL DB</div>
+                    </div>
+                    <div class="box-micro">
+                        <div><strong>Service Product</strong></div>
+                        <div>NestJS API</div>
+                        <div>MySQL DB</div>
+                    </div>
+                    <div class="box-micro">
+                        <div><strong>Service Order</strong></div>
+                        <div>NestJS API</div>
+                        <div>MySQL DB</div>
+                    </div>
+                </div>
+
+                <!-- Fusion -->
+                <div class="merge">⬇</div>
+                <div class="merge">Flux combinés</div>
+                <div class="merge">⬇</div>
+
+                <!-- Frontend -->
+                <div class="box-micro">
+                    <div><strong>Frontend</strong></div>
+                    <div>(React)</div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <!-- Slide 4: Problématiques Monolithique -->
+    <div class="slide">
+        <h2>3. Problématiques de l'Architecture Monolithique</h2>
+
+        <div class="problem-box">
+            <h3>⚠️ Problème de Scalabilité</h3>
+            <p>Impossible de scaler les composants individuellement. Si une fonction nécessite plus de ressources,
+                toute l'application doit être dupliquée.</p>
+        </div>
+
+        <div class="problem-box">
+            <h3>⚠️ Couplage Fort</h3>
+            <p>Modification d'un module peut impacter l'ensemble du système. Risque élevé de régression lors des
+                mises à jour.</p>
+        </div>
+
+        <div class="problem-box">
+            <h3>⚠️ Déploiement Complexe</h3>
+            <p>Un bug dans une partie mineure peut empêcher le déploiement de toute l'application. Temps de
+                déploiement long.</p>
+        </div>
+
+        <div class="problem-box">
+            <h3>⚠️ Technologie Unique</h3>
+            <p>Contrainte à une seule stack technologique. Difficile d'adopter de nouvelles technologies pour des
+                cas d'usage spécifiques.</p>
+        </div>
+    </div>
+
+    <!-- Slide 5: Solutions pour le Monolithique -->
+    <div class="slide">
+        <h2>4. Solutions pour l'Architecture Monolithique</h2>
+
+        <div class="solution-box">
+            <h3>🔧 Modularisation</h3>
+            <div class="schema">
+                <div class="container">
+                    <div class="monolith">
+                        <div class="modules">
+                            <div class="module">Module User</div>
+                            <div class="module">Module Product</div>
+                            <div class="module">...</div>
+                        </div>
+                        <div class="db">Base de données</div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <div class="solution-box">
+            <h3>🔧 Séparation par Couches</h3>
+            <div class="schema">
+                <div class="layers">
+                    <div class="layer">Presentation Layer (React)</div>
+                    <div class="arrow">⬇</div>
+                    <div class="layer">Business Layer (Services)</div>
+                    <div class="arrow">⬇</div>
+                    <div class="layer">Data Access Layer (Repositories)</div>
+                    <div class="arrow">⬇</div>
+                    <div class="layer">Database Layer (MySQL)</div>
+                </div>
+            </div>
+        </div>
+
+
+    </div>
+
+    <!-- Slide 6: Solution Microservices -->
+    <div class="slide">
+        <h2>5. Solution apportée par les Microservices</h2>
+
+        <div class="solution-box">
+            <h3>✅ Indépendance des Services</h3>
+            <p>Chaque service peut être développé, déployé et scalé indépendamment des autres services.</p>
+        </div>
+
+        <div class="solution-box">
+            <h3>✅ Isolation des Pannes</h3>
+            <p>Une panne dans un service n'affecte pas les autres services. Résilience accrue du système global.</p>
+        </div>
+
+        <div class="solution-box">
+            <h3>✅ Flexibilité Technologique</h3>
+            <p>Chaque service peut utiliser la technologie la plus adaptée à son domaine métier.</p>
+        </div>
+
+        <div class="solution-box">
+            <h3>✅ Équipes Autonomes</h3>
+            <p>Les équipes peuvent travailler de manière indépendante sur leurs services respectifs, accélérant le
+                développement.</p>
+        </div>
+    </div>
+
+    <!-- Slide 7: Avantages et Inconvénients -->
+    <div class="slide">
+        <h2>6. Avantages et Inconvénients des Microservices</h2>
+
+        <div class="pros-cons">
+            <div class="pros">
+                <h3>✅ Avantages</h3>
+                <ul>
+                    <li><strong>Scalabilité granulaire :</strong> Scale uniquement les services nécessaires</li>
+                    <li><strong>Déploiement indépendant :</strong> Mise en production rapide et sûre</li>
+                    <li><strong>Résilience :</strong> Isolation des pannes</li>
+                    <li><strong>Diversité technologique :</strong> Choix optimal pour chaque service</li>
+                    <li><strong>Équipes autonomes :</strong> Développement parallèle</li>
+                    <li><strong>Maintenance :</strong> Code plus simple par service</li>
+                </ul>
+            </div>
+
+            <div class="cons">
+                <h3>❌ Inconvénients</h3>
+                <ul>
+                    <li><strong>Complexité réseau :</strong> Communication inter-services</li>
+                    <li><strong>Données distribuées :</strong> Transactions complexes</li>
+                    <li><strong>Monitoring :</strong> Observabilité complexe</li>
+                    <li><strong>Latence :</strong> Appels réseau supplémentaires</li>
+                    <li><strong>DevOps :</strong> Infrastructure plus complexe</li>
+                    <li><strong>Debugging :</strong> Traçage inter-services difficile</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- Slide 8: Architecture Complète -->
+    <div class="slide">
+        <h2>7. Architecture Microservices Complète</h2>
+        <p style="text-align: center; margin-bottom: 30px;"><em>React + NestJS + MySQL + RabbitMQ</em></p>
+
+        <div class="architecture-diagram">
+            <div class="section-micro">
+                <div class="title-micro">FRONTEND (React)</div>
+                <div class="grid">
+                    <div class="box-microservice">User UI</div>
+                    <div class="box-microservice">Product UI</div>
+                    <div class="box-microservice">Order UI</div>
+                    <div class="box-microservice">Admin UI</div>
+                </div>
+            </div>
+
+            <div class="arrow-micro">⬇ HTTP/REST API</div>
+
+            <!-- API Gateway -->
+            <div class="section-micro">
+                <div class="title">API GATEWAY<br>(Load Balancer + Routing)</div>
+            </div>
+
+            <div class="arrow-micro">⬇</div>
+
+            <!-- Services -->
+            <div class="section-micro">
+                <div class="title">SERVICES PRINCIPAUX</div>
+                <div class="grid">
+                    <div class="box-microservice">
+                        <strong>User Service</strong><br>(NestJS)
+                        <div class="subgrid">Controllers<br>Services<br>Repositories</div>
+                    </div>
+                    <div class="box-microservice">
+                        <strong>Product Service</strong><br>(NestJS)
+                        <div class="subgrid">Controllers<br>Services<br>Repositories</div>
+                    </div>
+                    <div class="box-microservice">
+                        <strong>Order Service</strong><br>(NestJS)
+                        <div class="subgrid">Controllers<br>Services<br>Repositories</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="arrow-micro">⬇</div>
+
+            <!-- Databases -->
+            <div class="section-micro">
+                <div class="title">BASES DE DONNÉES (MySQL)</div>
+                <div class="grid">
+                    <div class="box-microservice">Users DB</div>
+                    <div class="box-microservice">Products DB</div>
+                    <div class="box-microservice">Orders DB</div>
+                </div>
+            </div>
+
+            <!-- Message Broker -->
+            <div class="section-micro">
+                <div class="title">MESSAGE BROKER (RabbitMQ)</div>
+                <div class="grid">
+                    <div class="box-microservice">Queue: user.events</div>
+                    <div class="box-microservice">Queue: product.events</div>
+                    <div class="box-microservice">Queue: order.events</div>
+                    <div class="box-microservice">Queue: notifications</div>
+                </div>
+            </div>
+
+            <!-- Additional Services -->
+            <div class="section-micro">
+                <div class="title">SERVICES ADDITIONNELS</div>
+                <div class="grid">
+                    <div class="box-microservice">Auth Service<br>(NestJS)</div>
+                    <div class="box-microservice">Email Service<br>(NestJS)</div>
+                    <div class="box-microservice">Payment Service<br>(NestJS)</div>
+                    <div class="box-microservice">Analytics Service<br>(NestJS)</div>
+                </div>
+            </div>
+
+            <!-- Communication Flow -->
+            <div class="section-micro">
+                <div class="title">FLUX DE COMMUNICATION</div>
+                <div class="flux">
+                    React App ⟶ (HTTP) ⟶ NestJS Services ⟷ (RabbitMQ) ⟷ Autres Services
+                </div>
+            </div>
+        </div>
+
+        <div class="definition-box">
+            <h3>🔄 Communication</h3>
+            <ul>
+                <li><strong>Synchrone :</strong> HTTP/REST entre Frontend et Services</li>
+                <li><strong>Asynchrone :</strong> RabbitMQ pour les événements métier</li>
+                <li><strong>API Gateway :</strong> Point d'entrée unique et routage</li>
+            </ul>
+        </div>
+    </div>
+    </div>
+
+    <script>
+        // Smooth scrolling for better navigation
+        document.addEventListener('DOMContentLoaded', function () {
+            const slides = document.querySelectorAll('.slide');
+            let currentSlide = 0;
+
+            // Add keyboard navigation
+            document.addEventListener('keydown', function (e) {
+                if (e.key === 'ArrowDown' && currentSlide < slides.length - 1) {
+                    currentSlide++;
+                    slides[currentSlide].scrollIntoView({ behavior: 'smooth' });
+                } else if (e.key === 'ArrowUp' && currentSlide > 0) {
+                    currentSlide--;
+                    slides[currentSlide].scrollIntoView({ behavior: 'smooth' });
+                }
+            });
+
+            // Update current slide on scroll
+            window.addEventListener('scroll', function () {
+                const scrollPosition = window.scrollY;
+                slides.forEach((slide, index) => {
+                    const slideTop = slide.offsetTop - 100;
+                    const slideBottom = slideTop + slide.offsetHeight;
+                    if (scrollPosition >= slideTop && scrollPosition < slideBottom) {
+                        currentSlide = index;
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+
+</html>
